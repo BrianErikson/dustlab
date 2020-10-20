@@ -20,3 +20,11 @@ void SpriteRenderer::render(const Texture &tex, const glm::mat4 &model, const gl
   tex.bind();
   this->quad_.render();
 }
+
+void SpriteRenderer::render(const Spritesheet &ss, const glm::mat4 &model, const glm::mat4 &projection,
+                            const glm::vec3 &color, int x, int y) {
+  this->default_program_->use(model, projection, color);
+  this->quad_.bind();
+
+  this->quad_.render();
+}

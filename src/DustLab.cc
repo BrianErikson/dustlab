@@ -120,13 +120,17 @@ bool DustLab::init() {
 int DustLab::run() {
   this->running_ = true;
 
+  /*
   Texture uv_test_tex{"./res/textures/uv_test.jpg"};
   if (!uv_test_tex.init()) {
     return 2;
   }
+   */
 
-  //Spritesheet witchcraft_sheet{"./res/textures/witchcraft_spritesheet.png", {24, 24}};
-  //witchcraft_sheet.init();
+  Spritesheet witchcraft_sheet{"./res/textures/witchcraft_spritesheet.png", {24, 24}};
+  if (!witchcraft_sheet.init()) {
+    return 2;
+  }
 
   SpriteRenderer renderer{};
   if (!renderer.init()) {
@@ -141,7 +145,7 @@ int DustLab::run() {
     glClearColor(0.0f, 0.f, 0.f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    renderer.render(uv_test_tex, glm::mat4{}, glm::ortho(0, 4, 4, 0, -1, 1), {1.f, 1.f, 1.f});
+    renderer.render(witchcraft_sheet, glm::mat4{}, glm::ortho(0, 4, 4, 0, -1, 1), {1.f, 1.f, 1.f}, 0, 0);
   }
 
   return 0;
