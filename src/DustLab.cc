@@ -1,7 +1,9 @@
 #include "DustLab.h"
 #include "GLProgram.h"
 #include "geometry/Quad.h"
+#include "SpriteRenderer.h"
 #include <GL/glu.h>
+#include <glm/ext.hpp>
 
 void printProgramLog(GLuint program) {
   //Make sure name is shader
@@ -117,17 +119,25 @@ bool DustLab::init() {
 int DustLab::run() {
   this->running_ = true;
 
+  Texture uv_test_tex{"./res/textures/uv_test.jpg"};
+  if (!uv_test_tex.init()) {
+    return 2;
+  }
+
+  SpriteRenderer renderer{};
+  if (!renderer.init()) {
+    return 2;
+  }
 
   SDL_Event ev;
   while (this->running_) {
     SDL_PollEvent(&ev);
     this->handle_event(ev);
-    //this->render();
     SDL_GL_SwapWindow(this->window_);
-    glClearColor(1.0f, 0.f, 0.f, 1.0f);
+    glClearColor(0.0f, 0.f, 0.f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    program.use();
-    screen.render();
+
+    renderer.render(uv_test_tex, glm::mat4{}, glm::ortho(0, 4, 4, 0, -1, 1), {1.f, 1.f, 1.f});
   }
 
   return 0;

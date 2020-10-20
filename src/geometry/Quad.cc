@@ -23,7 +23,7 @@ Quad::~Quad() {
   }
 }
 
-void Quad::bind() {
+void Quad::bind() const {
   glBindVertexArray(this->quad_vao);
   glBindBuffer(GL_ARRAY_BUFFER, this->quad_vbo);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->quad_ibo);
@@ -35,10 +35,10 @@ void Quad::render() {
 
 bool Quad::init() {
   static const GLfloat quad_verts[] = {
-      -1.f, -1.f, 0.f, // bl
-      1.f, -1.f, 0.f, // br
-      1.f, 1.f, 0.f, // tr
-      -1.f, 1.f, 0.f // tl
+      -1.f, -1.f, 0.f, 1.f, // bl
+      1.f, -1.f, 1.f, 1.f, // br
+      1.f, 1.f, 1.f, 0.f, // tr
+      -1.f, 1.f, 0.f, 0.f // tl
   };
   static const GLubyte quad_idxs[] = {
       3, 2, 0, 1
@@ -51,8 +51,10 @@ bool Quad::init() {
   glBindBuffer(GL_ARRAY_BUFFER, this->quad_vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(quad_verts), quad_verts, GL_STATIC_DRAW);
 
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)nullptr);
   glEnableVertexAttribArray(0);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+  glEnableVertexAttribArray(1);
 
   glGenBuffers(1, &this->quad_ibo);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->quad_ibo);

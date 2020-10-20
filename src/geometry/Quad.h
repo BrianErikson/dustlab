@@ -9,7 +9,7 @@ public:
   ~Quad() override;
   void render() override;
   bool init() override;
-  void bind();
+  void bind() const;
 
 private:
   GLuint quad_vao{0};

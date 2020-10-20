@@ -1,0 +1,3 @@
+[submodule "dustlab-data"]
+	path = dustlab-data
+	url = https://dev.azure.com/briankerikson/dustlab-data/_git/dustlab-data
