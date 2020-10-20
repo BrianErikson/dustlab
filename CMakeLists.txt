@@ -15,7 +15,7 @@ pkg_check_modules(glew REQUIRED IMPORTED_TARGET glew)
 
 set(SRCS
   src/DustLab.cc
-  src/Renderable.cc src/Renderable.h src/geometry/Quad.cc src/geometry/Quad.h src/Renderable.cc src/GLShader.cc src/GLShader.h src/GLProgram.cc src/GLProgram.h src/SpriteRenderer.cc src/SpriteRenderer.h src/Texture.cc src/Texture.h src/GLDefaultProgram.cc src/GLDefaultProgram.h)
+  src/Renderable.cc src/Renderable.h src/geometry/Quad.cc src/geometry/Quad.h src/Renderable.cc src/GLShader.cc src/GLShader.h src/GLProgram.cc src/GLProgram.h src/SpriteRenderer.cc src/SpriteRenderer.h src/Texture.cc src/Texture.h src/GLDefaultProgram.cc src/GLDefaultProgram.h src/Spritesheet.cc src/Spritesheet.h src/geometry/common.h)
 
 add_library(dustlabObj OBJECT
   ${SRCS}

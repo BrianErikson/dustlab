@@ -2,6 +2,7 @@
 #include "GLProgram.h"
 #include "geometry/Quad.h"
 #include "SpriteRenderer.h"
+#include "Spritesheet.h"
 #include <GL/glu.h>
 #include <glm/ext.hpp>
 
@@ -123,6 +124,9 @@ int DustLab::run() {
   if (!uv_test_tex.init()) {
     return 2;
   }
+
+  //Spritesheet witchcraft_sheet{"./res/textures/witchcraft_spritesheet.png", {24, 24}};
+  //witchcraft_sheet.init();
 
   SpriteRenderer renderer{};
   if (!renderer.init()) {
