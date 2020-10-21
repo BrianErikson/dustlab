@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <glm/gtx/transform.hpp>
+#include <ecs/core.h>
 #include "Spritesheet.h"
 
 Spritesheet::Spritesheet(const std::string &filepath, const Size<int> &sprite_size) : Texture{filepath},
@@ -119,8 +120,8 @@ glm::vec2 Spritesheet::image_offset(int row, int col) const {
 }
 
 glm::vec3 Spritesheet::model_offset_center(int row, int col) const {
-  return glm::vec3{row * this->stride_height_ - (this->stride_height_ * 0.5f),
-                   col * this->stride_width_ - (this->stride_width_ * 0.5f), 0.f};
+  return glm::vec3{col * this->stride_width_ - (this->stride_width_ * 0.5f),
+                   row * this->stride_height_ - (this->stride_height_ * 0.5f), 0.f};
 }
 
 Size<float> Spritesheet::cell_size() const {
@@ -139,4 +140,22 @@ void Spritesheet::render(int row, int col) const {
   unsigned long offset{(this->subdiv_cols_ * row + col) * stride * sizeof(GLubyte)};
   //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   glDrawElements(GL_TRIANGLE_STRIP, stride, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(offset));
+}
+
+entt::entity Spritesheet::create_actor(int row, int col) {
+  auto sprite_model = this->registry_.ecs.create();
+  auto &ess = this->registry_.ecs.emplace<ESpritesheet>(sprite_model);
+  ess.value = this->shared_from_this();
+  ess.row = row;
+  ess.col = col;
+  auto &tsm = this->registry_.ecs.emplace<ETransform>(sprite_model);
+
+  tsm.t.set_translation(-this->model_offset_center(ess.row, ess.col));
+  tsm.t.set_scale(1 / this->stride_width_, 1 / this->stride_height_);
+
+  auto sprite_node = this->registry_.ecs.create();
+  this->registry_.ecs.emplace<ETransform>(sprite_node);
+  this->registry_.ecs.emplace<EActor>(sprite_node).children.emplace_back(sprite_model);
+  this->registry_.ecs.emplace<EName>(sprite_node).value = "Character";
+  return sprite_node;
 }

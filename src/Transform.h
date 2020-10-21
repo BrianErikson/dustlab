@@ -7,8 +7,8 @@ public:
   Transform() = default;
 
   void set(const glm::mat4 &mat);
-  void translate(glm::vec3 pos);
-  void scale(float width, float height);
+  void set_translation(glm::vec3 pos);
+  void set_scale(float width, float height);
   void update();
   const glm::mat4& get_matrix();
 

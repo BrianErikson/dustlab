@@ -11,7 +11,7 @@ DustLabRegistry::DustLabRegistry() {
   {
     auto &t = this->ecs.emplace<ETransform>(this->camera_);
     t.type = TransformType::PROJECTION;
-    t.t.set(glm::ortho(-1.f, 1.f, -1.f, 1.f, 0.0f, 10.f));
+    t.t.set(glm::ortho(-10.f, 10.f, -10.f, 10.f, 0.0f, 10.f));
   }
 
   {

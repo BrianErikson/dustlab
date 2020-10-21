@@ -30,7 +30,7 @@ void SpriteRenderer::render(const std::shared_ptr<Spritesheet> &ss, const glm::m
                             const glm::vec3 &color, int row, int col) {
   const auto &p = this->registry_.projection().get_matrix();
   const auto &v = this->registry_.view().get_matrix();
-  std::cout << "Model: " << glm::to_string(p * v * model) << std::endl;
+  //std::cout << "Model: " << glm::to_string(p * v * model) << std::endl;
   this->default_program_->use(p * v * model, color);
   ss->bind();
   ss->render(row, col);

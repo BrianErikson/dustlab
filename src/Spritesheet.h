@@ -1,9 +1,11 @@
 #pragma once
 #include <string>
 #include <glm/glm.hpp>
+#include <entt/entt.hpp>
+#include <core/common.h>
 #include "Texture.h"
 
-class Spritesheet : public Texture
+class Spritesheet : public Texture, public std::enable_shared_from_this<Spritesheet>
 {
 public:
   Spritesheet(const std::string &filepath, const Size<int> &sprite_size);
@@ -13,6 +15,7 @@ public:
   void bind() const override;
 
   void render(int row, int col) const;
+  [[maybe_unused]] entt::entity create_actor(int row, int col) ;
   [[nodiscard]] int rows() const;
   [[nodiscard]] int cols() const;
   [[nodiscard]] glm::vec2 image_offset(int row, int col) const;
@@ -20,6 +23,7 @@ public:
   [[nodiscard]] Size<float> cell_size() const;
 
 protected:
+  DustLabRegistry &registry_{DustLabRegistry::instance()};
   Size<int> sprite_size_{0, 0};
   GLuint ss_ebo{0};
   GLuint ss_vao_{0};
