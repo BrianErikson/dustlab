@@ -44,7 +44,9 @@ RUN ldconfig && echo "X11UseLocalhost yes" >> /etc/ssh/sshd_config \
     echo '/usr/local/$LIB/libGL.so.1' >> /etc/ld.so.preload && \
     echo '/usr/local/$LIB/libEGL.so.1' >> /etc/ld.so.preload
 
-RUN git clone https://github.com/littlstar/soil/
+RUN git clone https://github.com/skypjack/entt.git --branch v3.5.2 --depth 1 \
+    && mkdir -p entt/build && cd entt/build && cmake -DCMAKE_INSTALL_PREFIX=/usr ../ \
+    && make -j$(nproc) install && cd ../../ && rm -r entt
 
 EXPOSE 22
 ENTRYPOINT exec /usr/sbin/sshd -D -e "$@"

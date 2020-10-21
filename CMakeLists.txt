@@ -10,12 +10,13 @@ add_compile_options(-Wall -pedantic)
 find_package(SDL2 REQUIRED)
 find_package(glm REQUIRED)
 find_package(SOIL REQUIRED)
+find_package(EnTT REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(glew REQUIRED IMPORTED_TARGET glew)
 
 set(SRCS
   src/DustLab.cc
-  src/Renderable.cc src/Renderable.h src/geometry/Quad.cc src/geometry/Quad.h src/Renderable.cc src/GLShader.cc src/GLShader.h src/GLProgram.cc src/GLProgram.h src/SpriteRenderer.cc src/SpriteRenderer.h src/Texture.cc src/Texture.h src/GLDefaultProgram.cc src/GLDefaultProgram.h src/Spritesheet.cc src/Spritesheet.h src/geometry/common.h)
+  src/Renderable.cc src/Renderable.h src/geometry/Quad.cc src/geometry/Quad.h src/Renderable.cc src/GLShader.cc src/GLShader.h src/GLProgram.cc src/GLProgram.h src/SpriteRenderer.cc src/SpriteRenderer.h src/Texture.cc src/Texture.h src/GLDefaultProgram.cc src/GLDefaultProgram.h src/Spritesheet.cc src/Spritesheet.h src/geometry/common.h src/Transform.cc src/Transform.h)
 
 add_library(dustlabObj OBJECT
   ${SRCS}
@@ -28,6 +29,7 @@ target_include_directories(dustlabObj PUBLIC
 
 target_link_libraries(dustlabObj
   SDL2
+  EnTT
   ${glm_LIBRARIES}
   ${SOIL_LIBRARIES}
   PkgConfig::glew

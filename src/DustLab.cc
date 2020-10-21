@@ -3,8 +3,10 @@
 #include "geometry/Quad.h"
 #include "SpriteRenderer.h"
 #include "Spritesheet.h"
+#include "Transform.h"
 #include <GL/glu.h>
 #include <glm/ext.hpp>
+#include <entt/entt.hpp>
 
 void printProgramLog(GLuint program) {
   //Make sure name is shader
@@ -120,12 +122,10 @@ bool DustLab::init() {
 int DustLab::run() {
   this->running_ = true;
 
-  /*
-  Texture uv_test_tex{"./res/textures/uv_test.jpg"};
-  if (!uv_test_tex.init()) {
-    return 2;
-  }
-   */
+  entt::registry registry;
+  auto sprite = registry.create();
+  auto &sprite_t = registry.emplace<Transform>(sprite);
+  // TODO: Center spritesheet quad and zoom to -1, 1 to fill viewport
 
   Spritesheet witchcraft_sheet{"./res/textures/witchcraft_spritesheet.png", {24, 24}};
   if (!witchcraft_sheet.init()) {
