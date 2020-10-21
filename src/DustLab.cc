@@ -1,3 +1,4 @@
+#include <iostream>
 #include "DustLab.h"
 #include "GLProgram.h"
 #include "geometry/Quad.h"
@@ -125,19 +126,28 @@ int DustLab::run() {
   if (!witchcraft_sheet->init()) {
     return 2;
   }
+  const auto &cell_size = witchcraft_sheet->cell_size();
 
   auto sprite_model = this->registry_.ecs.create();
   auto &ess = this->registry_.ecs.emplace<ESpritesheet>(sprite_model);
   ess.value = witchcraft_sheet;
   ess.row = 0;
   ess.col = 1;
-  this->registry_.ecs.emplace<Transform>(sprite_model).translate(
-      witchcraft_sheet->offset_center(ess.row, ess.col));
+  auto &tsm = this->registry_.ecs.emplace<ETransform>(sprite_model);
+
+  auto offset = witchcraft_sheet->offset_center(ess.row, ess.col);
+  offset.x *= cell_size.width;
+  offset.y *= cell_size.height;
+  offset.y *= -1;
+  tsm.t.translate(offset);
 
   auto sprite_node = this->registry_.ecs.create();
-  this->registry_.ecs.emplace<Transform>(sprite_node);
+  this->registry_.ecs.emplace<ETransform>(sprite_node);
   this->registry_.ecs.emplace<EActor>(sprite_node).children.emplace_back(sprite_model);
   this->registry_.ecs.emplace<EName>(sprite_node).value = "Character";
+
+  std::cout << "W: " << cell_size.width << " H: " << cell_size.height << std::endl;
+  //this->registry_.ecs.get<ETransform>(sprite_node).t.scale(2, 2);
 
   SpriteRenderer renderer{};
   if (!renderer.init()) {
@@ -188,9 +198,6 @@ void DustLab::render() {
   SDL_GL_SwapWindow(this->window_);
   glClearColor(1.0f, 0.f, 1.f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
-
-
-
 
   /*
   //Clear color buffer

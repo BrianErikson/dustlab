@@ -4,7 +4,7 @@
 #include <glm/gtx/transform.hpp>
 #include "Spritesheet.h"
 
-Spritesheet::Spritesheet(const std::string &filepath, const Size &sprite_size) : Texture{filepath},
+Spritesheet::Spritesheet(const std::string &filepath, const Size<int> &sprite_size) : Texture{filepath},
                                                                                  sprite_size_{sprite_size}
 {
 }
@@ -124,6 +124,10 @@ glm::vec3 Spritesheet::offset(int row, int col) const {
 glm::vec3 Spritesheet::offset_center(int row, int col) const {
   return this->offset(row, col) + glm::vec3{
     -(this->sprite_size_.width * 0.5f), -(this->sprite_size_.height * 0.5f), 0.f};
+}
+
+Size<float> Spritesheet::cell_size() const {
+  return {this->stride_width_, this->stride_height_};
 }
 
 void Spritesheet::bind() const {

@@ -25,6 +25,7 @@ add_library(dustlabObj OBJECT
 target_include_directories(dustlabObj PUBLIC
   ${SOIL_INCLUDE_DIRS}
   ${glew_INCLUDEDIR}
+  ${CMAKE_SOURCE_DIR}/src
 )
 
 target_link_libraries(dustlabObj

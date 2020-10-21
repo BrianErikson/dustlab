@@ -1,9 +1,10 @@
 #pragma once
 
+template<class T>
 struct Size {
-  int width{0};
-  int height{0};
+  T width{0};
+  T height{0};
   Size() = default;
-  Size(int width, int height) : width(width), height(height) {}
+  Size(T width, T height) : width(width), height(height) {}
   Size(const Size &other) = default;
 };

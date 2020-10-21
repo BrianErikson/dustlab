@@ -14,12 +14,12 @@ public:
   virtual bool init();
   virtual void bind() const;
   std::shared_ptr<const unsigned char> data();
-  Size& size();
+  Size<int>& size();
 
   const std::string filepath;
 
 protected:
-  Size size_;
+  Size<int> size_;
   std::shared_ptr<const unsigned char> image_{nullptr, SOIL_free_image_data};
   GLuint id_{0};
 };

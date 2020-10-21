@@ -5,16 +5,28 @@ class Transform
 {
 public:
   Transform() = default;
-  Transform(const glm::mat4 &rotation, const glm::mat4 &scale, const glm::mat4 &translation);
 
+  void set(const glm::mat4 &mat);
   void translate(glm::vec3 pos);
+  void scale(float width, float height);
   void update();
   const glm::mat4& get_matrix();
 
 private:
-  bool dirty_{false};
+  bool dirty_{true};
   glm::mat4 matrix{1.f};
   glm::mat4 r{1.f};
   glm::mat4 s{1.f};
   glm::mat4 t{1.f};
+};
+
+enum class TransformType {
+  MODEL,
+  VIEW,
+  PROJECTION
+};
+
+struct ETransform {
+  Transform t{};
+  TransformType type{TransformType::MODEL};
 };

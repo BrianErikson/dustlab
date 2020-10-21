@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <entt/entt.hpp>
+#include <glm/glm.hpp>
 #include "geometry/Quad.h"
 #include "Texture.h"
 #include "GLDefaultProgram.h"
@@ -13,9 +14,9 @@ class SpriteRenderer
 public:
   SpriteRenderer() = default;
   bool init();
-  void render(const Texture &tex, const glm::mat4 &model, const glm::mat4 &projection, const glm::vec3 &color);
-  void render(const std::shared_ptr<Spritesheet> &ss, const glm::mat4 &model, const glm::mat4 &projection,
-              const glm::vec3 &color, int row, int col);
+  void render(const Texture &tex, const glm::mat4 &model, const glm::vec3 &color);
+  void render(const std::shared_ptr<Spritesheet> &ss, const glm::mat4 &model, const glm::vec3 &color,
+              int row, int col);
   void render(const entt::entity &entity);
   void render(const entt::entity &entity, const glm::mat4 &transform);
 

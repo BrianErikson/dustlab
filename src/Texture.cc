@@ -41,6 +41,6 @@ std::shared_ptr<const unsigned char> Texture::data() {
   return this->image_;
 }
 
-Size& Texture::size() {
+Size<int>& Texture::size() {
   return this->size_;
 }
