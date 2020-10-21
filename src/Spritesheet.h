@@ -19,7 +19,7 @@ public:
   [[nodiscard]] int rows() const;
   [[nodiscard]] int cols() const;
   [[nodiscard]] glm::vec2 image_offset(int row, int col) const;
-  [[nodiscard]] glm::vec3 model_offset_center(int row, int col) const;
+  [[nodiscard]] glm::vec3 model_offset(int row, int col) const;
   [[nodiscard]] Size<float> cell_size() const;
 
 protected:

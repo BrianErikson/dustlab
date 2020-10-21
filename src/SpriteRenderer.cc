@@ -44,9 +44,10 @@ void SpriteRenderer::render(const entt::entity &entity, const glm::mat4 &transfo
   // TODO: get projection
   auto &local_t = this->registry_.ecs.get<ETransform>(entity);
   assert(local_t.type == TransformType::MODEL);
-  //std::cout << "Local: " << glm::to_string(local_t.t.get_matrix()) << std::endl;
-  //std::cout << "t: " << glm::to_string(transform) << std::endl;
-  glm::mat4 combined_t = local_t.t.get_matrix() * transform;
+  std::cout << "Local: " << glm::to_string(local_t.t.get_matrix()) << std::endl;
+  std::cout << "t: " << glm::to_string(transform) << std::endl;
+  glm::mat4 combined_t = transform * local_t.t.get_matrix();
+  std::cout << "combined: " << glm::to_string(combined_t) << std::endl;
 
   if (this->registry_.ecs.has<ESpritesheet>(entity)) {
     auto &ess = this->registry_.ecs.get<ESpritesheet>(entity);
@@ -61,4 +62,5 @@ void SpriteRenderer::render(const entt::entity &entity, const glm::mat4 &transfo
     }
   }
 
+  //assert(false);
 }

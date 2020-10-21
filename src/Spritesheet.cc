@@ -119,9 +119,8 @@ glm::vec2 Spritesheet::image_offset(int row, int col) const {
   return {col * this->sprite_size_.width, row * this->sprite_size_.height};
 }
 
-glm::vec3 Spritesheet::model_offset_center(int row, int col) const {
-  return glm::vec3{col * this->stride_width_ - (this->stride_width_ * 0.5f),
-                   row * this->stride_height_ - (this->stride_height_ * 0.5f), 0.f};
+glm::vec3 Spritesheet::model_offset(int row, int col) const {
+  return glm::vec3{col * this->stride_width_, row * this->stride_height_, 0.f};
 }
 
 Size<float> Spritesheet::cell_size() const {
@@ -150,7 +149,7 @@ entt::entity Spritesheet::create_actor(int row, int col) {
   ess.col = col;
   auto &tsm = this->registry_.ecs.emplace<ETransform>(sprite_model);
 
-  tsm.t.set_translation(-this->model_offset_center(ess.row, ess.col));
+  tsm.t.set_translation(-this->model_offset(ess.row, ess.col));
   tsm.t.set_scale(1 / this->stride_width_, 1 / this->stride_height_);
 
   auto sprite_node = this->registry_.ecs.create();

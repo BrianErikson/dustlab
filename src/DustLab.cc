@@ -121,16 +121,18 @@ bool DustLab::init() {
 int DustLab::run() {
   this->running_ = true;
 
-  std::shared_ptr<Spritesheet> witchcraft_sheet{new Spritesheet("./res/textures/uv_test.jpg",
-                                                                {64, 64})};
+  std::shared_ptr<Spritesheet> witchcraft_sheet{new Spritesheet("./res/textures/witchcraft_spritesheet.png",
+                                                                {24, 24})};
   if (!witchcraft_sheet->init()) {
     return 2;
   }
 
   auto a = witchcraft_sheet->create_actor(0, 1);
-  auto b = witchcraft_sheet->create_actor(0, 2);
-  auto c = witchcraft_sheet->create_actor(1, 0);
-  auto d = witchcraft_sheet->create_actor(0, 0);
+  //this->registry_.ecs.get<ETransform>(a).t.set_translation({0.5f, 0, 0});
+
+  //auto b = witchcraft_sheet->create_actor(0, 2);
+  //auto c = witchcraft_sheet->create_actor(1, 0);
+  //auto d = witchcraft_sheet->create_actor(0, 0);
 
   SpriteRenderer renderer{};
   if (!renderer.init()) {
@@ -146,9 +148,9 @@ int DustLab::run() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     renderer.render(a); // yellow 2
-    renderer.render(b); // green 3
-    renderer.render(c); // gray 2
-    renderer.render(d); // red 1
+    //renderer.render(b); // green 3
+    //renderer.render(c); // gray 2
+    //renderer.render(d); // red 1
   }
 
   return 0;
