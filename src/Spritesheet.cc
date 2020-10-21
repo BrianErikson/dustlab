@@ -35,11 +35,8 @@ bool Spritesheet::init() {
   this->subdiv_rows_ = this->size_.height / sprite_size_.height;
   this->subdiv_cols_ = this->size_.width / sprite_size_.width;
 
-  const float offset = 1.f;
-  float w_stride = this->sprite_size_.width / (float)this->size_.width;
-  float h_stride = this->sprite_size_.height / (float)this->size_.height;
-  this->stride_width_ = w_stride * 2; // scaled 2x to scale across -1 to 1 instead of 0 to 1
-  this->stride_height_ = h_stride * 2;
+  this->stride_width_ = this->sprite_size_.width / (float)this->size_.width;
+  this->stride_height_ = this->sprite_size_.height / (float)this->size_.height;
 
   std::vector<GLfloat> buffer_attrs{};
   std::vector<GLubyte> sprite_idxs{};
@@ -48,25 +45,25 @@ bool Spritesheet::init() {
   for (int y = 0; y < this->subdiv_rows_; y++) {
     for (int x = 0; x < this->subdiv_cols_; x++) {
       // uv is flipped on the x-axis on purpose
-      buffer_attrs.emplace_back(x * stride_width_ - offset); // tlx
-      buffer_attrs.emplace_back(y * stride_height_ - offset + stride_height_); // tly
-      buffer_attrs.emplace_back(x * w_stride); // blu
-      buffer_attrs.emplace_back(y * h_stride); // blv
+      buffer_attrs.emplace_back(x * stride_width_); // tlx
+      buffer_attrs.emplace_back(y * stride_height_ + stride_height_); // tly
+      buffer_attrs.emplace_back(x * this->stride_width_); // blu
+      buffer_attrs.emplace_back(y * this->stride_height_); // blv
 
-      buffer_attrs.emplace_back(x * stride_width_ - offset); // blx
-      buffer_attrs.emplace_back(y * stride_height_ - offset); // bly
-      buffer_attrs.emplace_back(x * w_stride); // tlu
-      buffer_attrs.emplace_back(y * h_stride + h_stride); // tlv
+      buffer_attrs.emplace_back(x * stride_width_); // blx
+      buffer_attrs.emplace_back(y * stride_height_); // bly
+      buffer_attrs.emplace_back(x * this->stride_width_); // tlu
+      buffer_attrs.emplace_back(y * this->stride_height_ + this->stride_height_); // tlv
 
-      buffer_attrs.emplace_back(x * stride_width_ - offset + stride_width_); // trx
-      buffer_attrs.emplace_back(y * stride_height_ - offset + stride_height_); // try
-      buffer_attrs.emplace_back(x * w_stride + w_stride); // bru
-      buffer_attrs.emplace_back(y * h_stride); // brv
+      buffer_attrs.emplace_back(x * stride_width_ + stride_width_); // trx
+      buffer_attrs.emplace_back(y * stride_height_ + stride_height_); // try
+      buffer_attrs.emplace_back(x * this->stride_width_ + this->stride_width_); // bru
+      buffer_attrs.emplace_back(y * this->stride_height_); // brv
 
-      buffer_attrs.emplace_back(x * stride_width_ - offset + stride_width_); // brx
-      buffer_attrs.emplace_back(y * stride_height_ - offset); // bry
-      buffer_attrs.emplace_back(x * w_stride + w_stride); // tru
-      buffer_attrs.emplace_back(y * h_stride + h_stride); // trv
+      buffer_attrs.emplace_back(x * stride_width_ + stride_width_); // brx
+      buffer_attrs.emplace_back(y * stride_height_); // bry
+      buffer_attrs.emplace_back(x * this->stride_width_ + this->stride_width_); // tru
+      buffer_attrs.emplace_back(y * this->stride_height_ + this->stride_height_); // trv
 
       int idx_offset = quad_count * 4;
       sprite_idxs.emplace_back(0 + idx_offset);
@@ -117,13 +114,13 @@ int Spritesheet::cols() const {
   return this->subdiv_cols_;
 }
 
-glm::vec3 Spritesheet::offset(int row, int col) const {
-  return {col * this->sprite_size_.width, row * this->sprite_size_.height, 0.f};
+glm::vec2 Spritesheet::image_offset(int row, int col) const {
+  return {col * this->sprite_size_.width, row * this->sprite_size_.height};
 }
 
-glm::vec3 Spritesheet::offset_center(int row, int col) const {
-  return this->offset(row, col) + glm::vec3{
-    -(this->sprite_size_.width * 0.5f), -(this->sprite_size_.height * 0.5f), 0.f};
+glm::vec3 Spritesheet::model_offset_center(int row, int col) const {
+  return glm::vec3{row * this->stride_height_ - (this->stride_height_ * 0.5f),
+                   col * this->stride_width_ - (this->stride_width_ * 0.5f), 0.f};
 }
 
 Size<float> Spritesheet::cell_size() const {

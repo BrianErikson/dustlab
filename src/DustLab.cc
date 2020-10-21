@@ -135,10 +135,7 @@ int DustLab::run() {
   ess.col = 1;
   auto &tsm = this->registry_.ecs.emplace<ETransform>(sprite_model);
 
-  auto offset = witchcraft_sheet->offset_center(ess.row, ess.col);
-  offset.x *= cell_size.width;
-  offset.y *= cell_size.height;
-  offset.y *= -1;
+  auto offset = witchcraft_sheet->model_offset_center(ess.row, ess.col);
   tsm.t.translate(offset);
 
   auto sprite_node = this->registry_.ecs.create();
