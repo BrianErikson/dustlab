@@ -1,12 +1,22 @@
 #include <SDL2/SDL_log.h>
 #include <vector>
-#include <SDL2/SDL_video.h>
+#include <iostream>
 #include "Spritesheet.h"
 
 Spritesheet::Spritesheet(const std::string &filepath, const Size &sprite_size) : Texture{filepath},
 sprite_size{sprite_size}
 {
+}
 
+Spritesheet::~Spritesheet() {
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glDeleteBuffers(1, &this->ss_vbo_);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  glDeleteBuffers(1, &this->ss_ebo);
+
+  glBindVertexArray(0);
+  glDeleteVertexArrays(1, &this->ss_vao_);
 }
 
 bool Spritesheet::init() {
@@ -30,38 +40,39 @@ bool Spritesheet::init() {
   float sw_stride = w_stride * 2; // scaled 2x to scale across -1 to 1 instead of 0 to 1
   float sh_stride = h_stride * 2;
 
-  std::vector<GLfloat> buffer_attrs((this->subdiv_rows_ * this->subdiv_cols_) * (4 * 4));
-  std::vector<std::vector<GLubyte>> buffer_idxs(this->subdiv_rows_ * this->subdiv_cols_);
+  std::vector<GLfloat> buffer_attrs{};
+  std::vector<GLubyte> sprite_idxs{};
+  int quad_count = 0;
 
   for (int y = 0; y < this->subdiv_rows_; y++) {
-    std::vector<GLubyte> sprite_idxs{4};
     for (int x = 0; x < this->subdiv_cols_; x++) {
-      buffer_attrs.emplace_back(x * sw_stride - offset); // blx
-      buffer_attrs.emplace_back(y * sh_stride - offset); // bly
-      buffer_attrs.emplace_back(x * w_stride); // blu
-      buffer_attrs.emplace_back(1 - (y * w_stride)); // blv
-
-      buffer_attrs.emplace_back(x * sw_stride - offset + sw_stride); // brx
-      buffer_attrs.emplace_back(y * sh_stride - offset); // bry
-      buffer_attrs.emplace_back(x * w_stride); // bru
-      buffer_attrs.emplace_back(1 - (y * w_stride)); // brv
-
-      buffer_attrs.emplace_back(x * sw_stride - offset + sw_stride); // trx
-      buffer_attrs.emplace_back(y * sh_stride - offset + sh_stride); // try
-      buffer_attrs.emplace_back(x * w_stride); // tru
-      buffer_attrs.emplace_back(1 - (y * w_stride)); // trv
-
+      // uv is flipped on the x-axis on purpose
       buffer_attrs.emplace_back(x * sw_stride - offset); // tlx
       buffer_attrs.emplace_back(y * sh_stride - offset + sh_stride); // tly
       buffer_attrs.emplace_back(x * w_stride); // blu
-      buffer_attrs.emplace_back(1 - (y * w_stride)); // trv
+      buffer_attrs.emplace_back(y * h_stride); // blv
 
-      int idx_offset = buffer_idxs.size() * 4;
-      sprite_idxs.emplace_back(3 + idx_offset);
-      sprite_idxs.emplace_back(2 + idx_offset);
+      buffer_attrs.emplace_back(x * sw_stride - offset); // blx
+      buffer_attrs.emplace_back(y * sh_stride - offset); // bly
+      buffer_attrs.emplace_back(x * w_stride); // tlu
+      buffer_attrs.emplace_back(y * h_stride + h_stride); // tlv
+
+      buffer_attrs.emplace_back(x * sw_stride - offset + sw_stride); // trx
+      buffer_attrs.emplace_back(y * sh_stride - offset + sh_stride); // try
+      buffer_attrs.emplace_back(x * w_stride + w_stride); // bru
+      buffer_attrs.emplace_back(y * h_stride); // brv
+
+      buffer_attrs.emplace_back(x * sw_stride - offset + sw_stride); // brx
+      buffer_attrs.emplace_back(y * sh_stride - offset); // bry
+      buffer_attrs.emplace_back(x * w_stride + w_stride); // tru
+      buffer_attrs.emplace_back(y * h_stride + h_stride); // trv
+
+      int idx_offset = quad_count * 4;
       sprite_idxs.emplace_back(0 + idx_offset);
       sprite_idxs.emplace_back(1 + idx_offset);
-      buffer_idxs.emplace_back(sprite_idxs);
+      sprite_idxs.emplace_back(2 + idx_offset);
+      sprite_idxs.emplace_back(3 + idx_offset);
+      quad_count++;
     }
   }
 
@@ -74,7 +85,7 @@ bool Spritesheet::init() {
 
   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)nullptr);
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
   glEnableVertexAttribArray(1);
 
   GLenum gl_err = glGetError();
@@ -83,22 +94,15 @@ bool Spritesheet::init() {
     return false;
   }
 
-  this->ss_ibos_size = buffer_idxs.size();
-  this->ss_ibos = static_cast<GLuint*>(malloc(buffer_idxs.size() * sizeof(GLuint)));
-  glGenBuffers(buffer_idxs.size(), this->ss_ibos);
+  glGenBuffers(1, &this->ss_ebo);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ss_ebo);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sprite_idxs.size() * sizeof(GLubyte), sprite_idxs.data(),
+               GL_STATIC_DRAW);
 
-  for (int i = 0; i < this->ss_ibos_size; i++) {
-    GLuint &ibo = this->ss_ibos[i];
-    std::vector<GLubyte> &sprite_idxs = buffer_idxs[i];
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sprite_idxs.size() * sizeof(GLubyte), sprite_idxs.data(),
-                 GL_STATIC_DRAW);
-
-    gl_err = glGetError();
-    if (gl_err != GL_NO_ERROR) {
-      SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Could not create a IBO: %s", gluErrorString(gl_err));
-      return false;
-    }
+  gl_err = glGetError();
+  if (gl_err != GL_NO_ERROR) {
+    SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Could not create a EBO: %s", gluErrorString(gl_err));
+    return false;
   }
 
   return true;
@@ -120,9 +124,16 @@ const unsigned char *Spritesheet::sprite(int row, int col) {
   return this->image_.get() + (this->size_.width * row + col);
 }
 
-void Spritesheet::bind(int row, int col) {
-  const auto &sprite_ibo = this->ss_ibos[this->ss_ibos_size * row + col];
+void Spritesheet::bind() const {
+  Texture::bind();
   glBindVertexArray(this->ss_vao_);
   glBindBuffer(GL_ARRAY_BUFFER, this->ss_vbo_);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sprite_ibo);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ss_ebo);
+}
+
+void Spritesheet::render(int row, int col) const {
+  static const int stride{4};
+  unsigned long offset{(this->subdiv_cols_ * row + col) * stride * sizeof(GLubyte)};
+  //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  glDrawElements(GL_TRIANGLE_STRIP, stride, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(offset));
 }

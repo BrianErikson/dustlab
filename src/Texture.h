@@ -9,7 +9,7 @@
 class Texture
 {
 public:
-  Texture(const std::string &filepath);
+  explicit Texture(const std::string &filepath);
   virtual ~Texture() = default;
   virtual bool init();
   virtual void bind() const;

@@ -145,7 +145,7 @@ int DustLab::run() {
     glClearColor(0.0f, 0.f, 0.f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    renderer.render(witchcraft_sheet, glm::mat4{}, glm::ortho(0, 4, 4, 0, -1, 1), {1.f, 1.f, 1.f}, 0, 0);
+    renderer.render(witchcraft_sheet, glm::mat4{}, glm::ortho(0, 4, 4, 0, -1, 1), {1.f, 1.f, 1.f}, 1, 0);
   }
 
   return 0;
