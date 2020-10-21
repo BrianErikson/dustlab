@@ -1,10 +1,11 @@
 #include <SDL2/SDL_log.h>
 #include <vector>
 #include <iostream>
+#include <glm/gtx/transform.hpp>
 #include "Spritesheet.h"
 
 Spritesheet::Spritesheet(const std::string &filepath, const Size &sprite_size) : Texture{filepath},
-sprite_size{sprite_size}
+                                                                                 sprite_size_{sprite_size}
 {
 }
 
@@ -24,21 +25,21 @@ bool Spritesheet::init() {
     return false;
   }
 
-  if (this->size_.width % sprite_size.width != 0 || this->size_.height % sprite_size.height != 0) {
+  if (this->size_.width % sprite_size_.width != 0 || this->size_.height % sprite_size_.height != 0) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "invalid sprite_size passed to spritesheet");
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "w: %d, h: %d", this->size_.width, this->size_.height);
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%d:%d", this->size_.width % sprite_size.width, this->size_.height % sprite_size.height);
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%d:%d", this->size_.width % sprite_size_.width, this->size_.height % sprite_size_.height);
     return false;
   }
 
-  this->subdiv_rows_ = this->size_.height / sprite_size.height;
-  this->subdiv_cols_ = this->size_.width / sprite_size.width;
+  this->subdiv_rows_ = this->size_.height / sprite_size_.height;
+  this->subdiv_cols_ = this->size_.width / sprite_size_.width;
 
   const float offset = 1.f;
-  float w_stride = this->sprite_size.width / (float)this->size_.width;
-  float h_stride = this->sprite_size.height / (float)this->size_.height;
-  float sw_stride = w_stride * 2; // scaled 2x to scale across -1 to 1 instead of 0 to 1
-  float sh_stride = h_stride * 2;
+  float w_stride = this->sprite_size_.width / (float)this->size_.width;
+  float h_stride = this->sprite_size_.height / (float)this->size_.height;
+  this->stride_width_ = w_stride * 2; // scaled 2x to scale across -1 to 1 instead of 0 to 1
+  this->stride_height_ = h_stride * 2;
 
   std::vector<GLfloat> buffer_attrs{};
   std::vector<GLubyte> sprite_idxs{};
@@ -47,23 +48,23 @@ bool Spritesheet::init() {
   for (int y = 0; y < this->subdiv_rows_; y++) {
     for (int x = 0; x < this->subdiv_cols_; x++) {
       // uv is flipped on the x-axis on purpose
-      buffer_attrs.emplace_back(x * sw_stride - offset); // tlx
-      buffer_attrs.emplace_back(y * sh_stride - offset + sh_stride); // tly
+      buffer_attrs.emplace_back(x * stride_width_ - offset); // tlx
+      buffer_attrs.emplace_back(y * stride_height_ - offset + stride_height_); // tly
       buffer_attrs.emplace_back(x * w_stride); // blu
       buffer_attrs.emplace_back(y * h_stride); // blv
 
-      buffer_attrs.emplace_back(x * sw_stride - offset); // blx
-      buffer_attrs.emplace_back(y * sh_stride - offset); // bly
+      buffer_attrs.emplace_back(x * stride_width_ - offset); // blx
+      buffer_attrs.emplace_back(y * stride_height_ - offset); // bly
       buffer_attrs.emplace_back(x * w_stride); // tlu
       buffer_attrs.emplace_back(y * h_stride + h_stride); // tlv
 
-      buffer_attrs.emplace_back(x * sw_stride - offset + sw_stride); // trx
-      buffer_attrs.emplace_back(y * sh_stride - offset + sh_stride); // try
+      buffer_attrs.emplace_back(x * stride_width_ - offset + stride_width_); // trx
+      buffer_attrs.emplace_back(y * stride_height_ - offset + stride_height_); // try
       buffer_attrs.emplace_back(x * w_stride + w_stride); // bru
       buffer_attrs.emplace_back(y * h_stride); // brv
 
-      buffer_attrs.emplace_back(x * sw_stride - offset + sw_stride); // brx
-      buffer_attrs.emplace_back(y * sh_stride - offset); // bry
+      buffer_attrs.emplace_back(x * stride_width_ - offset + stride_width_); // brx
+      buffer_attrs.emplace_back(y * stride_height_ - offset); // bry
       buffer_attrs.emplace_back(x * w_stride + w_stride); // tru
       buffer_attrs.emplace_back(y * h_stride + h_stride); // trv
 
@@ -116,12 +117,13 @@ int Spritesheet::cols() const {
   return this->subdiv_cols_;
 }
 
-const unsigned char *Spritesheet::sprite(int row, int col) {
-  if (row > this->subdiv_rows_ || col > this->subdiv_cols_ || !this->image_) {
-    return nullptr;
-  }
+glm::vec3 Spritesheet::offset(int row, int col) const {
+  return {col * this->sprite_size_.width, row * this->sprite_size_.height, 0.f};
+}
 
-  return this->image_.get() + (this->size_.width * row + col);
+glm::vec3 Spritesheet::offset_center(int row, int col) const {
+  return this->offset(row, col) + glm::vec3{
+    -(this->sprite_size_.width * 0.5f), -(this->sprite_size_.height * 0.5f), 0.f};
 }
 
 void Spritesheet::bind() const {

@@ -4,9 +4,7 @@
 #include "SpriteRenderer.h"
 #include "Spritesheet.h"
 #include "Transform.h"
-#include <GL/glu.h>
-#include <glm/ext.hpp>
-#include <entt/entt.hpp>
+#include "ecs/core.h"
 
 void printProgramLog(GLuint program) {
   //Make sure name is shader
@@ -122,15 +120,24 @@ bool DustLab::init() {
 int DustLab::run() {
   this->running_ = true;
 
-  entt::registry registry;
-  auto sprite = registry.create();
-  auto &sprite_t = registry.emplace<Transform>(sprite);
-  // TODO: Center spritesheet quad and zoom to -1, 1 to fill viewport
-
-  Spritesheet witchcraft_sheet{"./res/textures/witchcraft_spritesheet.png", {24, 24}};
-  if (!witchcraft_sheet.init()) {
+  std::shared_ptr<Spritesheet> witchcraft_sheet{new Spritesheet("./res/textures/witchcraft_spritesheet.png",
+                                                                {24, 24})};
+  if (!witchcraft_sheet->init()) {
     return 2;
   }
+
+  auto sprite_model = this->registry_.ecs.create();
+  auto &ess = this->registry_.ecs.emplace<ESpritesheet>(sprite_model);
+  ess.value = witchcraft_sheet;
+  ess.row = 0;
+  ess.col = 1;
+  this->registry_.ecs.emplace<Transform>(sprite_model).translate(
+      witchcraft_sheet->offset_center(ess.row, ess.col));
+
+  auto sprite_node = this->registry_.ecs.create();
+  this->registry_.ecs.emplace<Transform>(sprite_node);
+  this->registry_.ecs.emplace<EActor>(sprite_node).children.emplace_back(sprite_model);
+  this->registry_.ecs.emplace<EName>(sprite_node).value = "Character";
 
   SpriteRenderer renderer{};
   if (!renderer.init()) {
@@ -145,7 +152,7 @@ int DustLab::run() {
     glClearColor(0.0f, 0.f, 0.f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    renderer.render(witchcraft_sheet, glm::mat4{}, glm::ortho(0, 4, 4, 0, -1, 1), {1.f, 1.f, 1.f}, 1, 0);
+    renderer.render(sprite_node);
   }
 
   return 0;

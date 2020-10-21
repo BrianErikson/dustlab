@@ -1,4 +1,6 @@
 #include "SpriteRenderer.h"
+#include "ecs/core.h"
+#include "Transform.h"
 
 bool SpriteRenderer::init() {
   this->default_program_ = std::make_unique<GLDefaultProgram>();
@@ -21,9 +23,31 @@ void SpriteRenderer::render(const Texture &tex, const glm::mat4 &model, const gl
   this->quad_.render();
 }
 
-void SpriteRenderer::render(const Spritesheet &ss, const glm::mat4 &model, const glm::mat4 &projection,
-                            const glm::vec3 &color, int x, int y) {
+void SpriteRenderer::render(const std::shared_ptr<Spritesheet> &ss, const glm::mat4 &model,
+                            const glm::mat4 &projection, const glm::vec3 &color, int row, int col) {
   this->default_program_->use(model, projection, color);
-  ss.bind();
-  ss.render(y, x);
+  ss->bind();
+  ss->render(row, col);
+}
+
+void SpriteRenderer::render(const entt::entity &entity) {
+  this->render(entity, {});
+}
+
+void SpriteRenderer::render(const entt::entity &entity, const glm::mat4 &transform) {
+  // TODO: get projection
+  auto &local_t = this->registry_.ecs.get<Transform>(entity);
+  glm::mat4 combined_t = local_t.get_matrix() * transform;
+
+  if (this->registry_.ecs.has<ESpritesheet>(entity)) {
+    auto &ess = this->registry_.ecs.get<ESpritesheet>(entity);
+    this->render(ess.value, combined_t, glm::mat4{1.f}, glm::vec3{1.f, 1.f, 1.f}, ess.row, ess.col);
+  }
+
+  if (this->registry_.ecs.has<EActor>(entity)) {
+    for (const auto &sub_entity : this->registry_.ecs.get<EActor>(entity).children) {
+      this->render(sub_entity, combined_t);
+    }
+  }
+
 }
