@@ -9,17 +9,18 @@
 Spritesheet::Spritesheet(const std::string &filepath, const Size<int> &sprite_size) : Texture{filepath},
                                                                                  sprite_size_{sprite_size}
 {
+  /* TODO: remove, but leaving for now as an example of the observer pattern
   this->on_ESpritesheet_updated_ = std::shared_ptr<Listener>(new Listener{
       entt::observer{this->registry_.ecs, entt::collector.update<ESpritesheet>()},
       [&](const entt::entity &entity) {
         auto &ess = this->registry_.ecs.get<ESpritesheet>(entity);
         auto &t = this->registry_.ecs.get<ETransform>(entity);
         assert(t.type == TransformType::MODEL);
-        std::cout << "new offset: " << glm::to_string(this->model_offset(ess.row, ess.col)) << std::endl;
-        t.t.set_translation(this->model_offset(ess.row, ess.col));
+        t.t.set_translation(-this->model_offset(ess.row, ess.col));
       }
   });
-  this->registry_.subscribe(this->on_ESpritesheet_updated_);
+   */
+  //this->registry_.subscribe(this->on_ESpritesheet_updated_);
 }
 
 Spritesheet::~Spritesheet() {

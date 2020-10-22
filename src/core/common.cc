@@ -54,21 +54,25 @@ void DustLabRegistry::update(long dt) {
   }
 }
 
-void DustLabRegistry::timer_oneshot(long ms, const std::function<void()>& callback) {
-  std::shared_ptr<TimerEvent<std::function<void()>>> timer{
+Timer DustLabRegistry::timer_oneshot(long ms, const std::function<void()>& callback) {
+  Timer timer{
     std::make_shared<TimerEvent<std::function<void()>>>(callback)};
   this->timers_.emplace_back(timer);
   this->timer_loop_.schedule(timer.get(), ms);
+
+  return timer;
 }
 
-void DustLabRegistry::timer_recurring(long ms, const std::function<void()> &callback) {
-  std::shared_ptr<TimerEvent<std::function<void()>>> timer{
+Timer DustLabRegistry::timer_recurring(long ms, const std::function<void()> &callback) {
+  Timer timer{
       std::make_shared<TimerEvent<std::function<void()>>>([=, this](){
         callback();
         this->timer_recurring(ms, callback);
       })};
   this->timers_.emplace_back(timer);
   this->timer_loop_.schedule(timer.get(), ms);
+
+  return timer;
 }
 
 void DustLabRegistry::subscribe(const std::shared_ptr<Listener> &listener) {

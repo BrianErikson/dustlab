@@ -123,31 +123,35 @@ bool DustLab::init() {
 int DustLab::run() {
   this->running_ = true;
 
-  std::shared_ptr<Spritesheet> witchcraft_sheet{new Spritesheet("./res/textures/uv_test.jpg",
-                                                                {64, 64})};
+  std::shared_ptr<Spritesheet> witchcraft_sheet{new Spritesheet("./res/textures/witchcraft_spritesheet.png",
+                                                                {24, 24})};
   if (!witchcraft_sheet->init()) {
     return 2;
   }
 
   auto ent = witchcraft_sheet->create_actor();
   // Animation. Woof
-  const int witch_cols = witchcraft_sheet->cols();
-  this->registry_.timer_recurring(300, [&]() {
+  auto anim_timer = this->registry_.timer_recurring(150, [&]() {
     for (auto &child : this->registry_.ecs.get<EActor>(ent).children) {
       if (!this->registry_.ecs.has<ESpritesheet>(child)) {
         continue;
       }
 
-      this->registry_.ecs.patch<ESpritesheet>(child, [=](auto &ess) {
-        if (ess.col < witch_cols) {
+      this->registry_.ecs.patch<ESpritesheet>(child, [&](auto &ess) {
+        if (ess.col < ess.value->cols()) {
           ess.col++;
         } else {
           ess.col = 0;
         }
+
+        DustLabRegistry::instance().ecs.patch<ETransform>(child, [&](auto &t) {
+          assert(t.type == TransformType::MODEL);
+          t.t.set_translation(-ess.value->model_offset(ess.row, ess.col));
+        });
       });
     }
   });
-
+  anim_timer->cancel();
 
   SpriteRenderer renderer{};
   if (!renderer.init()) {

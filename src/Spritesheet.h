@@ -26,7 +26,7 @@ public:
 
 protected:
   DustLabRegistry &registry_{DustLabRegistry::instance()};
-  std::shared_ptr<Listener> on_ESpritesheet_updated_{nullptr};
+  //std::shared_ptr<Listener> on_ESpritesheet_updated_{nullptr};
   Size<int> sprite_size_{0, 0};
   GLuint ss_ebo{0};
   GLuint ss_vao_{0};

@@ -9,6 +9,8 @@ struct Listener {
   std::function<void(entt::entity)> callback;
 };
 
+using Timer = std::shared_ptr<TimerEvent<std::function<void()>>>;
+
 class DustLabRegistry {
 public:
   static DustLabRegistry& instance();
@@ -21,8 +23,8 @@ public:
   Transform& projection();
 
   void update(long dt);
-  void timer_oneshot(long ms, const std::function<void()>& callback);
-  void timer_recurring(long ms, const std::function<void()>& callback);
+  Timer timer_oneshot(long ms, const std::function<void()>& callback);
+  Timer timer_recurring(long ms, const std::function<void()>& callback);
 
   void subscribe(const std::shared_ptr<Listener> &listener);
   void unsubscribe(Listener *listener);
