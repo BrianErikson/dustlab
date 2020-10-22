@@ -2,12 +2,24 @@
 #include <vector>
 #include <iostream>
 #include <glm/gtx/transform.hpp>
+#include <glm/gtx/string_cast.hpp>
 #include <ecs/core.h>
 #include "Spritesheet.h"
 
 Spritesheet::Spritesheet(const std::string &filepath, const Size<int> &sprite_size) : Texture{filepath},
                                                                                  sprite_size_{sprite_size}
 {
+  this->on_ESpritesheet_updated_ = std::shared_ptr<Listener>(new Listener{
+      entt::observer{this->registry_.ecs, entt::collector.update<ESpritesheet>()},
+      [&](const entt::entity &entity) {
+        auto &ess = this->registry_.ecs.get<ESpritesheet>(entity);
+        auto &t = this->registry_.ecs.get<ETransform>(entity);
+        assert(t.type == TransformType::MODEL);
+        std::cout << "new offset: " << glm::to_string(this->model_offset(ess.row, ess.col)) << std::endl;
+        t.t.set_translation(this->model_offset(ess.row, ess.col));
+      }
+  });
+  this->registry_.subscribe(this->on_ESpritesheet_updated_);
 }
 
 Spritesheet::~Spritesheet() {
@@ -141,12 +153,12 @@ void Spritesheet::render(int row, int col) const {
   glDrawElements(GL_TRIANGLE_STRIP, stride, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(offset));
 }
 
-entt::entity Spritesheet::create_actor(int row, int col) {
+entt::entity Spritesheet::create_actor() {
   auto sprite_model = this->registry_.ecs.create();
   auto &ess = this->registry_.ecs.emplace<ESpritesheet>(sprite_model);
   ess.value = this->shared_from_this();
-  ess.row = row;
-  ess.col = col;
+  ess.row = 0;
+  ess.col = 0;
   auto &tsm = this->registry_.ecs.emplace<ETransform>(sprite_model);
 
   tsm.t.set_translation(-this->model_offset(ess.row, ess.col));

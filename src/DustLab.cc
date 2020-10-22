@@ -1,4 +1,6 @@
 #include <iostream>
+#include <chrono>
+#include <timer-wheel.h>
 #include "DustLab.h"
 #include "GLProgram.h"
 #include "geometry/Quad.h"
@@ -121,18 +123,31 @@ bool DustLab::init() {
 int DustLab::run() {
   this->running_ = true;
 
-  std::shared_ptr<Spritesheet> witchcraft_sheet{new Spritesheet("./res/textures/witchcraft_spritesheet.png",
-                                                                {24, 24})};
+  std::shared_ptr<Spritesheet> witchcraft_sheet{new Spritesheet("./res/textures/uv_test.jpg",
+                                                                {64, 64})};
   if (!witchcraft_sheet->init()) {
     return 2;
   }
 
-  auto a = witchcraft_sheet->create_actor(0, 1);
-  //this->registry_.ecs.get<ETransform>(a).t.set_translation({0.5f, 0, 0});
+  auto ent = witchcraft_sheet->create_actor();
+  // Animation. Woof
+  const int witch_cols = witchcraft_sheet->cols();
+  this->registry_.timer_recurring(300, [&]() {
+    for (auto &child : this->registry_.ecs.get<EActor>(ent).children) {
+      if (!this->registry_.ecs.has<ESpritesheet>(child)) {
+        continue;
+      }
 
-  //auto b = witchcraft_sheet->create_actor(0, 2);
-  //auto c = witchcraft_sheet->create_actor(1, 0);
-  //auto d = witchcraft_sheet->create_actor(0, 0);
+      this->registry_.ecs.patch<ESpritesheet>(child, [=](auto &ess) {
+        if (ess.col < witch_cols) {
+          ess.col++;
+        } else {
+          ess.col = 0;
+        }
+      });
+    }
+  });
+
 
   SpriteRenderer renderer{};
   if (!renderer.init()) {
@@ -140,17 +155,24 @@ int DustLab::run() {
   }
 
   SDL_Event ev;
+
+  auto now = std::chrono::high_resolution_clock::now();
   while (this->running_) {
     SDL_PollEvent(&ev);
     this->handle_event(ev);
+
+    auto dt_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::high_resolution_clock::now() - now).count();
+    if (dt_ms > 0) {
+      this->registry_.update(dt_ms);
+    }
+    now = std::chrono::high_resolution_clock::now();
+
     SDL_GL_SwapWindow(this->window_);
     glClearColor(0.0f, 0.f, 0.f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    renderer.render(a); // yellow 2
-    //renderer.render(b); // green 3
-    //renderer.render(c); // gray 2
-    //renderer.render(d); // red 1
+    renderer.render(ent);
   }
 
   return 0;
