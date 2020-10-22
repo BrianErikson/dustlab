@@ -9,18 +9,6 @@
 Spritesheet::Spritesheet(const std::string &filepath, const Size<int> &sprite_size) : Texture{filepath},
                                                                                  sprite_size_{sprite_size}
 {
-  /* TODO: remove, but leaving for now as an example of the observer pattern
-  this->on_ESpritesheet_updated_ = std::shared_ptr<Listener>(new Listener{
-      entt::observer{this->registry_.ecs, entt::collector.update<ESpritesheet>()},
-      [&](const entt::entity &entity) {
-        auto &ess = this->registry_.ecs.get<ESpritesheet>(entity);
-        auto &t = this->registry_.ecs.get<ETransform>(entity);
-        assert(t.type == TransformType::MODEL);
-        t.t.set_translation(-this->model_offset(ess.row, ess.col));
-      }
-  });
-   */
-  //this->registry_.subscribe(this->on_ESpritesheet_updated_);
 }
 
 Spritesheet::~Spritesheet() {
@@ -35,6 +23,10 @@ Spritesheet::~Spritesheet() {
 }
 
 bool Spritesheet::init() {
+  if (this->ss_vao_) {
+    return true;
+  }
+
   if (!Texture::init()) {
     return false;
   }
@@ -152,22 +144,4 @@ void Spritesheet::render(int row, int col) const {
   unsigned long offset{(this->subdiv_cols_ * row + col) * stride * sizeof(GLubyte)};
   //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   glDrawElements(GL_TRIANGLE_STRIP, stride, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(offset));
-}
-
-entt::entity Spritesheet::create_actor() {
-  auto sprite_model = this->registry_.ecs.create();
-  auto &ess = this->registry_.ecs.emplace<ESpritesheet>(sprite_model);
-  ess.value = this->shared_from_this();
-  ess.row = 0;
-  ess.col = 0;
-  auto &tsm = this->registry_.ecs.emplace<ETransform>(sprite_model);
-
-  tsm.t.set_translation(-this->model_offset(ess.row, ess.col));
-  tsm.t.set_scale(1 / this->stride_width_, 1 / this->stride_height_);
-
-  auto sprite_node = this->registry_.ecs.create();
-  this->registry_.ecs.emplace<ETransform>(sprite_node);
-  this->registry_.ecs.emplace<EActor>(sprite_node).children.emplace_back(sprite_model);
-  this->registry_.ecs.emplace<EName>(sprite_node).value = "Character";
-  return sprite_node;
 }

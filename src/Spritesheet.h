@@ -5,9 +5,7 @@
 #include <core/common.h>
 #include "Texture.h"
 
-struct ESpritesheet;
-
-class Spritesheet : public Texture, public std::enable_shared_from_this<Spritesheet>
+class Spritesheet : public Texture
 {
 public:
   Spritesheet(const std::string &filepath, const Size<int> &sprite_size);
@@ -17,7 +15,6 @@ public:
   void bind() const override;
 
   void render(int row, int col) const;
-  [[maybe_unused]] entt::entity create_actor();
   [[nodiscard]] int rows() const;
   [[nodiscard]] int cols() const;
   [[nodiscard]] glm::vec2 image_offset(int row, int col) const;
@@ -26,7 +23,6 @@ public:
 
 protected:
   DustLabRegistry &registry_{DustLabRegistry::instance()};
-  //std::shared_ptr<Listener> on_ESpritesheet_updated_{nullptr};
   Size<int> sprite_size_{0, 0};
   GLuint ss_ebo{0};
   GLuint ss_vao_{0};
@@ -36,10 +32,3 @@ protected:
   float stride_width_{0};
   float stride_height_{0};
 };
-
-struct ESpritesheet {
-  std::shared_ptr<Spritesheet> value{nullptr};
-  int row{0};
-  int col{0};
-};
-

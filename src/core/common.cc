@@ -11,13 +11,11 @@ DustLabRegistry &DustLabRegistry::instance() {
 DustLabRegistry::DustLabRegistry() {
   {
     auto &t = this->ecs.emplace<ETransform>(this->camera_);
-    t.type = TransformType::PROJECTION;
     t.t.set(glm::ortho(0.f, 1.f, 0.f, 1.f, 0.0f, 10.f));
   }
 
   {
     auto &t = this->ecs.emplace<ETransform>(this->world_);
-    t.type = TransformType::VIEW;
     t.t.set(glm::mat4{1.f});
   }
 }

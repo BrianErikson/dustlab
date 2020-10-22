@@ -46,9 +46,9 @@ void SpriteRenderer::render(const entt::entity &entity, const glm::mat4 &transfo
   assert(local_t.type == TransformType::MODEL);
   glm::mat4 combined_t = transform * local_t.t.get_matrix();
 
-  if (this->registry_.ecs.has<ESpritesheet>(entity)) {
-    auto &ess = this->registry_.ecs.get<ESpritesheet>(entity);
-    this->render(ess.value, combined_t, glm::vec3{1.f, 1.f, 1.f}, ess.row, ess.col);
+  if (this->registry_.ecs.has<ESpriteModel>(entity)) {
+    auto &ess = this->registry_.ecs.get<ESpriteModel>(entity);
+    this->render(ess.value, ess.transform.get_matrix() * combined_t, glm::vec3{1.f, 1.f, 1.f}, ess.row, ess.col);
   }
 
   // TODO if texture?

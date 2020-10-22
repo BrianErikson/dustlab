@@ -16,7 +16,7 @@ pkg_check_modules(glew REQUIRED IMPORTED_TARGET glew)
 
 set(SRCS
   src/DustLab.cc
-  src/Renderable.cc src/Renderable.h src/geometry/Quad.cc src/geometry/Quad.h src/Renderable.cc src/GLShader.cc src/GLShader.h src/GLProgram.cc src/GLProgram.h src/SpriteRenderer.cc src/SpriteRenderer.h src/Texture.cc src/Texture.h src/GLDefaultProgram.cc src/GLDefaultProgram.h src/Spritesheet.cc src/Spritesheet.h src/geometry/common.h src/Transform.cc src/Transform.h src/ecs/core.h src/ecs/core.cc src/core/common.cc src/core/common.h extern/timer-wheel.h)
+  src/Renderable.cc src/Renderable.h src/geometry/Quad.cc src/geometry/Quad.h src/Renderable.cc src/GLShader.cc src/GLShader.h src/GLProgram.cc src/GLProgram.h src/SpriteRenderer.cc src/SpriteRenderer.h src/Texture.cc src/Texture.h src/GLDefaultProgram.cc src/GLDefaultProgram.h src/Spritesheet.cc src/Spritesheet.h src/geometry/common.h src/Transform.cc src/Transform.h src/ecs/core.h src/ecs/core.cc src/core/common.cc src/core/common.h extern/timer-wheel.h src/ecs/EntityGenerator.cc src/ecs/EntityGenerator.h)
 
 add_library(dustlabObj OBJECT
   ${SRCS}
