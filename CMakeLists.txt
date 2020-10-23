@@ -5,18 +5,19 @@ set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_SOURCE_DIR}/cmake")
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS})
-add_compile_options(-Wall -pedantic)
+add_compile_options(-Wall -pedantic -fconcepts)
 
 find_package(SDL2 REQUIRED)
 find_package(glm REQUIRED)
 find_package(SOIL REQUIRED)
 find_package(EnTT REQUIRED)
+find_package(LibNoise REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(glew REQUIRED IMPORTED_TARGET glew)
 
 set(SRCS
   src/DustLab.cc
-  src/Renderable.cc src/Renderable.h src/geometry/Quad.cc src/geometry/Quad.h src/Renderable.cc src/GLShader.cc src/GLShader.h src/GLProgram.cc src/GLProgram.h src/SpriteRenderer.cc src/SpriteRenderer.h src/Texture.cc src/Texture.h src/GLDefaultProgram.cc src/GLDefaultProgram.h src/Spritesheet.cc src/Spritesheet.h src/geometry/common.h src/Transform.cc src/Transform.h src/ecs/core.h src/ecs/core.cc src/core/common.cc src/core/common.h extern/timer-wheel.h src/ecs/EntityGenerator.cc src/ecs/EntityGenerator.h src/DesertTilesheet.cc src/DesertTilesheet.h)
+  src/Renderable.cc src/Renderable.h src/geometry/Quad.cc src/geometry/Quad.h src/Renderable.cc src/GLShader.cc src/GLShader.h src/GLProgram.cc src/GLProgram.h src/SpriteRenderer.cc src/SpriteRenderer.h src/Texture.cc src/Texture.h src/GLDefaultProgram.cc src/GLDefaultProgram.h src/Spritesheet.cc src/Spritesheet.h src/geometry/common.h src/Transform.cc src/Transform.h src/ecs/core.h src/ecs/core.cc src/core/common.cc src/core/common.h extern/timer-wheel.h src/ecs/EntityGenerator.cc src/ecs/EntityGenerator.h src/DesertTilesheet.cc src/DesertTilesheet.h src/WorldGenerator.cc src/WorldGenerator.h)
 
 add_library(dustlabObj OBJECT
   ${SRCS}
@@ -25,6 +26,7 @@ add_library(dustlabObj OBJECT
 target_include_directories(dustlabObj PUBLIC
   ${SOIL_INCLUDE_DIRS}
   ${glew_INCLUDEDIR}
+  ${LIBNOISE_INCLUDE_DIRS}
   ${CMAKE_SOURCE_DIR}/src
   ${CMAKE_SOURCE_DIR}/extern
 )
@@ -34,6 +36,7 @@ target_link_libraries(dustlabObj
   ${EnTT_LIBRARIES}
   ${glm_LIBRARIES}
   ${SOIL_LIBRARIES}
+  ${LIBNOISE_LIBRARIES}
   PkgConfig::glew
 )
 
