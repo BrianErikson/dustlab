@@ -3,6 +3,7 @@
 #include <entt/entt.hpp>
 #include <Transform.h>
 #include <timer-wheel.h>
+#include <random>
 
 struct Listener {
   entt::observer observer;
@@ -29,13 +30,20 @@ public:
   void subscribe(const std::shared_ptr<Listener> &listener);
   void unsubscribe(Listener *listener);
 
+  double rand();
+
   entt::registry ecs{};
 
 private:
   DustLabRegistry();
-  std::list<std::shared_ptr<Listener>> listeners_;
-  std::list<std::shared_ptr<TimerEventInterface>> timers_;
-  TimerWheel timer_loop_;
+  std::list<std::shared_ptr<Listener>> listeners_{};
+  std::list<std::shared_ptr<TimerEventInterface>> timers_{};
+  TimerWheel timer_loop_{};
+
   entt::entity camera_{this->ecs.create()};
   entt::entity world_{this->ecs.create()};
+
+  std::random_device rand_dev_{};
+  std::default_random_engine rand_eng_{this->rand_dev_()};
+  std::uniform_real_distribution<double> rand_{0.0, 1.0};
 };

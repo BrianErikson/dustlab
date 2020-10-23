@@ -2,8 +2,6 @@
 #include <vector>
 #include <iostream>
 #include <glm/gtx/transform.hpp>
-#include <glm/gtx/string_cast.hpp>
-#include <ecs/core.h>
 #include "Spritesheet.h"
 
 Spritesheet::Spritesheet(const std::string &filepath, const Size<int> &sprite_size) : Texture{filepath},
@@ -20,6 +18,11 @@ Spritesheet::~Spritesheet() {
 
   glBindVertexArray(0);
   glDeleteVertexArrays(1, &this->ss_vao_);
+}
+
+bool Spritesheet::init(Size<int> sprite_size) {
+  this->sprite_size_ = sprite_size;
+  return this->init();
 }
 
 bool Spritesheet::init() {
@@ -137,11 +140,4 @@ void Spritesheet::bind() const {
   glBindVertexArray(this->ss_vao_);
   glBindBuffer(GL_ARRAY_BUFFER, this->ss_vbo_);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ss_ebo);
-}
-
-void Spritesheet::render(int row, int col) const {
-  static const int stride{4};
-  unsigned long offset{(this->subdiv_cols_ * row + col) * stride * sizeof(GLubyte)};
-  //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-  glDrawElements(GL_TRIANGLE_STRIP, stride, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(offset));
 }

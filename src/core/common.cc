@@ -82,3 +82,7 @@ void DustLabRegistry::unsubscribe(Listener *listener) {
     return a.get() == listener;
   });
 }
+
+double DustLabRegistry::rand() {
+  return this->rand_(this->rand_eng_);
+}

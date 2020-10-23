@@ -1,20 +1,18 @@
 #pragma once
 #include <string>
 #include <glm/glm.hpp>
-#include <entt/entt.hpp>
-#include <core/common.h>
 #include "Texture.h"
 
 class Spritesheet : public Texture
 {
 public:
-  Spritesheet(const std::string &filepath, const Size<int> &sprite_size);
+  explicit Spritesheet(const std::string &filepath, const Size<int> &sprite_size = {});
   ~Spritesheet() override;
 
+  bool init(Size<int> sprite_size);
   bool init() override;
   void bind() const override;
 
-  void render(int row, int col) const;
   [[nodiscard]] int rows() const;
   [[nodiscard]] int cols() const;
   [[nodiscard]] glm::vec2 image_offset(int row, int col) const;
@@ -22,7 +20,6 @@ public:
   [[nodiscard]] Size<float> cell_size() const;
 
 protected:
-  DustLabRegistry &registry_{DustLabRegistry::instance()};
   Size<int> sprite_size_{0, 0};
   GLuint ss_ebo{0};
   GLuint ss_vao_{0};
