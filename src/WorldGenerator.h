@@ -1,16 +1,14 @@
 #pragma once
 #include <memory>
-
-struct Image {
-  std::shared_ptr<const unsigned char> data{nullptr};
-  int width{0};
-  int height{0};
-};
+#include <opencv2/opencv.hpp>
+#include "DesertTilesheet.h"
 
 class WorldGenerator
 {
 public:
-  static Image get(int seed, double step, int x, int y, int z, int width, int height);
+  static cv::Mat get_perlin_noise(int seed, double step, int x, int y, int z, int width, int height);
+  static cv::Mat get_map(const DesertTilesheet &tilesheet);
+
+  static std::vector<cv::Point2i> neighboring_edges(cv::Mat src, int row, int col, unsigned char lower_thresh);
+
 };
-
-

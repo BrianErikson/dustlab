@@ -5,7 +5,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y binutils cmake make gcc g++ bash \
     libsdl2-dev libglew-dev openssh-server gdb gdbserver rsync git libglm-dev libsoil-dev \
-    libnoise-dev && rm -rf /var/lib/apt/lists* && rm -rf /var/cache/debconf/*-old
+    libopencv-dev libnoise-dev && rm -rf /var/lib/apt/lists* && rm -rf /var/cache/debconf/*-old
 
 # OpenGL support
 # replace with other Ubuntu version if desired
@@ -48,7 +48,11 @@ RUN git clone https://github.com/skypjack/entt.git --branch v3.5.2 --depth 1 \
     && mkdir -p entt/build && cd entt/build && cmake -DCMAKE_INSTALL_PREFIX=/usr ../ \
     && make -j$(nproc) install && cd ../../ && rm -r entt
 
-RUN ln -s /usr/include/libnoise /usr/include/noise
+RUN ln -s /usr/include/libnoise /usr/include/noise && ln -s /usr/include/opencv4 /usr/include/opencv4/opencv
+
+RUN git clone https://github.com/CaseyCarter/cmcstl2.git --depth 1 \
+    && mkdir -p cmcstl2/build && cd cmcstl2/build && cmake -DCMAKE_INSTALL_PREFIX=/usr ../ \
+    && make -j $(nproc) install && cd ../../ && rm -r cmcstl2
 
 EXPOSE 22
 ENTRYPOINT exec /usr/sbin/sshd -D -e "$@"

@@ -89,8 +89,9 @@ void DesertTilesheet::render(int x, int y, TileFlag flags) {
 }
  */
 
-RenderTile &DesertTilesheet::tile(double unit_interval, TileFlag flags) {
-  auto &tiles = this->render_tiles_[flags];
+const RenderTile& DesertTilesheet::tile(double unit_interval, TileFlag flags) const {
+  assert(this->render_tiles_.contains(flags));
+  const auto &tiles = this->render_tiles_.at(flags);
   assert(!tiles.empty());
 
   int idx = std::floor(unit_interval * tiles.size());

@@ -12,8 +12,10 @@ find_package(glm REQUIRED)
 find_package(SOIL REQUIRED)
 find_package(EnTT REQUIRED)
 find_package(LibNoise REQUIRED)
+find_package(cmcstl2 CONFIG REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(glew REQUIRED IMPORTED_TARGET glew)
+pkg_check_modules(opencv4 REQUIRED IMPORTED_TARGET opencv4)
 
 set(SRCS
   src/DustLab.cc
@@ -26,17 +28,18 @@ add_library(dustlabObj OBJECT
 target_include_directories(dustlabObj PUBLIC
   ${SOIL_INCLUDE_DIRS}
   ${glew_INCLUDEDIR}
-  ${LIBNOISE_INCLUDE_DIRS}
+  ${LIBNOISE_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}/src
   ${CMAKE_SOURCE_DIR}/extern
 )
 
 target_link_libraries(dustlabObj
   SDL2
+  stl2
   ${EnTT_LIBRARIES}
   ${glm_LIBRARIES}
   ${SOIL_LIBRARIES}
-  ${LIBNOISE_LIBRARIES}
+  PkgConfig::opencv4
   PkgConfig::glew
 )
 

@@ -14,7 +14,9 @@ constexpr TileFlag TYPE_MASK = 0x00F0;
 // Cardinal directions, including diagonals
 constexpr TileFlag DIR_MASK = 0xFF00;
 
-constexpr TileFlag MEDIUM_SOLID = 1 << 0;
+constexpr TileFlag MEDIUM_ERR = 1 << 0;
+constexpr TileFlag MEDIUM_VOID = 1 << 0;
+constexpr TileFlag MEDIUM_SOLID = 1 << 2;
 
 constexpr TileFlag TYPE_EDGE = 1 << 4;
 constexpr TileFlag TYPE_CORNER = 1 << 5;
@@ -50,7 +52,7 @@ public:
    * \param flags Specifications for specific tile to retrieve
    * \return A random tile from the specified set
    */
-  RenderTile &tile(double unit_interval, TileFlag flags);
+  const RenderTile& tile(double unit_interval, TileFlag flags) const;
 
 private:
   void generate_tiles(auto&& obj, TileFlag flags);
