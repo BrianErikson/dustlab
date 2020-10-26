@@ -2,19 +2,26 @@
 #include <memory>
 #include <entt/entt.hpp>
 #include <glm/glm.hpp>
+#include <core/common.h>
 #include "geometry/Quad.h"
 #include "Texture.h"
 #include "GLDefaultProgram.h"
 #include "Spritesheet.h"
 #include "Transform.h"
+#include "WorldGenerator.h"
+#include "Tilesheet.h"
 
-class DustLabRegistry;
+struct Scene {
+  Map map;
+  std::shared_ptr<Tilesheet> tilesheet;
+};
 
 class SpriteRenderer
 {
 public:
   SpriteRenderer();
   bool init();
+  void render(const Scene &scene, const glm::mat4 &model, const glm::vec3 &color);
   void render(const Spritesheet *ss, const glm::mat4 &model, const glm::vec3 &color,
               int row, int col);
   void render(const entt::entity &entity);

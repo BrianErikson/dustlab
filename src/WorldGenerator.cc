@@ -1,8 +1,6 @@
 #include "WorldGenerator.h"
 #include <noise/noise.h>
-#include <experimental/ranges/algorithm>
 #include <experimental/ranges/iterator>
-#include <core/common.h>
 
 using namespace noise;
 
@@ -11,7 +9,7 @@ cv::Mat WorldGenerator::get_perlin_noise(int seed, double step, int x, int y, in
   perlin.SetNoiseQuality(NoiseQuality::QUALITY_BEST);
   perlin.SetSeed(seed);
 
-  cv::Mat image{height, width, CV_8UC1};
+  cv::Mat image(height, width, CV_8UC1);
 
   for (int row = 0; row < height; row++) {
     for (int col = 0; col < width; col++) {
@@ -25,9 +23,9 @@ cv::Mat WorldGenerator::get_perlin_noise(int seed, double step, int x, int y, in
   return image;
 }
 
-cv::Mat WorldGenerator::get_map(const DesertTilesheet &tilesheet) {
+Map WorldGenerator::get_map() {
   const int void_upper_thresh = 128;
-  cv::Mat map{100, 100, CV_32SC1};
+  Map map(100, 100, CV_32SC1);
 
   auto noise1 = WorldGenerator::get_perlin_noise(0, 0.1, 0, 0, 0, map.cols, map.rows);
   for (int row = 0; row < map.rows; row++) {
@@ -39,6 +37,8 @@ cv::Mat WorldGenerator::get_map(const DesertTilesheet &tilesheet) {
         continue;
       }
 
+      dest_val = TileFlags::MEDIUM_SOLID | TileFlags::TYPE_CENTER;
+      /*
       auto edge_dirs = WorldGenerator::neighboring_edges(noise1, row, col, 128);
       if (edge_dirs.empty()) {
         dest_val = TileFlags::MEDIUM_SOLID | TileFlags::TYPE_CENTER;
@@ -85,8 +85,11 @@ cv::Mat WorldGenerator::get_map(const DesertTilesheet &tilesheet) {
         else if (first_edge.y == -1) dest_val |= TileFlags::DIR_BOTTOM;
         else dest_val = TileFlags::MEDIUM_ERR;
       }
+       */
     }
   }
+
+  return map;
 }
 
 std::vector<cv::Point2i> WorldGenerator::neighboring_edges(cv::Mat src, int row, int col,

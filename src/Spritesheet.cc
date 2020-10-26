@@ -20,9 +20,8 @@ Spritesheet::~Spritesheet() {
   glDeleteVertexArrays(1, &this->ss_vao_);
 }
 
-bool Spritesheet::init(Size<int> sprite_size) {
+void Spritesheet::set_sprite_size(Size<int> sprite_size) {
   this->sprite_size_ = sprite_size;
-  return this->init();
 }
 
 bool Spritesheet::init() {

@@ -9,6 +9,7 @@
 #include "Spritesheet.h"
 #include "Transform.h"
 #include "ecs/core.h"
+#include "WorldGenerator.h"
 
 void printProgramLog(GLuint program) {
   //Make sure name is shader
@@ -136,6 +137,11 @@ int DustLab::run() {
   }
   auto ebot = opt.value();
 
+  Scene scene;
+  scene.tilesheet = std::make_shared<Tilesheet>("./res/textures/desert_tileset.png", "./res/textures/desert_tileset.json");
+  scene.tilesheet->init();
+  scene.map = WorldGenerator::get_map();
+
   SDL_Event ev;
 
   auto now = std::chrono::high_resolution_clock::now();
@@ -154,6 +160,7 @@ int DustLab::run() {
     glClearColor(0.0f, 0.f, 0.f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    renderer.render(scene, {}, glm::vec3(1.f));
     renderer.render(ebot);
   }
 

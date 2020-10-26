@@ -11,7 +11,7 @@ DustLabRegistry &DustLabRegistry::instance() {
 DustLabRegistry::DustLabRegistry() {
   {
     auto &t = this->ecs.emplace<ETransform>(this->camera_);
-    t.t.set(glm::ortho(0.f, 20.f, 0.f, 20.f, 0.0f, 10.f));
+    t.t.set(glm::ortho(0.f, 10.f, 0.f, 10.f, 0.0f, 10.f));
   }
 
   {

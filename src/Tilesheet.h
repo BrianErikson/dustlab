@@ -15,7 +15,7 @@ constexpr TileFlag TYPE_MASK = 0x00F0;
 constexpr TileFlag DIR_MASK = 0xFF00;
 
 constexpr TileFlag MEDIUM_ERR = 1 << 0;
-constexpr TileFlag MEDIUM_VOID = 1 << 0;
+constexpr TileFlag MEDIUM_VOID = 1 << 1;
 constexpr TileFlag MEDIUM_SOLID = 1 << 2;
 
 constexpr TileFlag TYPE_EDGE = 1 << 4;
@@ -40,10 +40,11 @@ struct RenderTile {
   int col{0};
 };
 
-class DesertTilesheet : public Spritesheet
+class Tilesheet : public Spritesheet
 {
 public:
-  DesertTilesheet();
+  Tilesheet(const std::string &spritesheet_path,
+            const std::string &spritesheet_json_path);
   bool init() override;
 
   /**
@@ -52,7 +53,7 @@ public:
    * \param flags Specifications for specific tile to retrieve
    * \return A random tile from the specified set
    */
-  const RenderTile& tile(double unit_interval, TileFlag flags) const;
+  RenderTile& tile(double unit_interval, TileFlag flags);
 
 private:
   void generate_tiles(auto&& obj, TileFlag flags);

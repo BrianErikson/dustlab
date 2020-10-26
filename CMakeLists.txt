@@ -19,7 +19,7 @@ pkg_check_modules(opencv4 REQUIRED IMPORTED_TARGET opencv4)
 
 set(SRCS
   src/DustLab.cc
-  src/Renderable.cc src/Renderable.h src/geometry/Quad.cc src/geometry/Quad.h src/Renderable.cc src/GLShader.cc src/GLShader.h src/GLProgram.cc src/GLProgram.h src/SpriteRenderer.cc src/SpriteRenderer.h src/Texture.cc src/Texture.h src/GLDefaultProgram.cc src/GLDefaultProgram.h src/Spritesheet.cc src/Spritesheet.h src/geometry/common.h src/Transform.cc src/Transform.h src/ecs/core.h src/ecs/core.cc src/core/common.cc src/core/common.h extern/timer-wheel.h src/ecs/EntityGenerator.cc src/ecs/EntityGenerator.h src/DesertTilesheet.cc src/DesertTilesheet.h src/WorldGenerator.cc src/WorldGenerator.h)
+  src/Renderable.cc src/Renderable.h src/geometry/Quad.cc src/geometry/Quad.h src/Renderable.cc src/GLShader.cc src/GLShader.h src/GLProgram.cc src/GLProgram.h src/SpriteRenderer.cc src/SpriteRenderer.h src/Texture.cc src/Texture.h src/GLDefaultProgram.cc src/GLDefaultProgram.h src/Spritesheet.cc src/Spritesheet.h src/geometry/common.h src/Transform.cc src/Transform.h src/ecs/core.h src/ecs/core.cc src/core/common.cc src/core/common.h extern/timer-wheel.h src/ecs/EntityGenerator.cc src/ecs/EntityGenerator.h src/Tilesheet.cc src/Tilesheet.h src/WorldGenerator.cc src/WorldGenerator.h)
 
 add_library(dustlabObj OBJECT
   ${SRCS}
@@ -36,6 +36,7 @@ target_include_directories(dustlabObj PUBLIC
 target_link_libraries(dustlabObj
   SDL2
   stl2
+  ${LIBNOISE_LIBRARIES}
   ${EnTT_LIBRARIES}
   ${glm_LIBRARIES}
   ${SOIL_LIBRARIES}

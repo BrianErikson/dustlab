@@ -8,6 +8,7 @@ public:
   GLDefaultProgram();
   bool init() override;
   void use(const glm::mat4 &mvp, const glm::vec3 &color);
+  void set_mvp(const glm::mat4 &mvp);
 
 private:
   int uloc_mvp_{0}; // mat4

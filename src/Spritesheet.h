@@ -6,10 +6,9 @@
 class Spritesheet : public Texture
 {
 public:
-  explicit Spritesheet(const std::string &filepath, const Size<int> &sprite_size = {});
+  explicit Spritesheet(const std::string &filepath, const Size<int> &sprite_size);
   ~Spritesheet() override;
 
-  bool init(Size<int> sprite_size);
   bool init() override;
   void bind() const override;
 
@@ -20,6 +19,7 @@ public:
   [[nodiscard]] Size<float> cell_size() const;
 
 protected:
+  void set_sprite_size(Size<int> sprite_size);
   Size<int> sprite_size_{0, 0};
   GLuint ss_ebo{0};
   GLuint ss_vao_{0};

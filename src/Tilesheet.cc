@@ -1,23 +1,26 @@
-#include "DesertTilesheet.h"
+#include "Tilesheet.h"
 #include <fstream>
 #include <json.hpp>
 #include <glm/gtx/transform.hpp>
 #include <SDL2/SDL_log.h>
+#include <iostream>
 
 using json = nlohmann::json;
 
-DesertTilesheet::DesertTilesheet() : Spritesheet("./res/textures/desert_tileset.png"),
-json_path_{"./res/textures/desert_tileset.json"} {
+Tilesheet::Tilesheet(const std::string &spritesheet_path, const std::string &spritesheet_json_path) :
+Spritesheet(spritesheet_path, {}),
+json_path_{spritesheet_json_path} {
 }
 
-bool DesertTilesheet::init() {
+bool Tilesheet::init() {
   std::ifstream t(this->json_path_);
   std::string str((std::istreambuf_iterator<char>(t)),
                    std::istreambuf_iterator<char>());
   const auto jdata = json::parse(str);
   assert(!jdata.empty());
 
-  if (!Spritesheet::init({jdata["tile_width"], jdata["tile_height"]})) {
+  this->set_sprite_size({jdata["tile_width"], jdata["tile_height"]});
+  if (!Spritesheet::init()) {
     return false;
   }
 
@@ -32,7 +35,7 @@ bool DesertTilesheet::init() {
   return true;
 }
 
-void DesertTilesheet::generate_tiles(auto &&obj, TileFlag flags) {
+void Tilesheet::generate_tiles(auto &&obj, TileFlag flags) {
   assert(obj.is_array());
   TileFlag type = flags & TileFlags::TYPE_MASK;
 
@@ -64,7 +67,7 @@ void DesertTilesheet::generate_tiles(auto &&obj, TileFlag flags) {
   }
 }
 
-void DesertTilesheet::generate_direction_tiles(int row, int col, TileFlag flags, int base_rotation) {
+void Tilesheet::generate_direction_tiles(int row, int col, TileFlag flags, int base_rotation) {
   TileFlag medium = flags & TileFlags::MEDIUM_MASK;
   TileFlag type = flags & TileFlags::TYPE_MASK;
   assert(!(flags & TileFlags::DIR_MASK));
@@ -80,7 +83,7 @@ void DesertTilesheet::generate_direction_tiles(int row, int col, TileFlag flags,
 }
 
 /*
-void DesertTilesheet::render(int x, int y, TileFlag flags) {
+void Tilesheet::render(int x, int y, TileFlag flags) {
 
   glm::mat4 world_offset{glm::translate(glm::mat4{1.f}, glm::vec3{x, y, 0.f})};
 
@@ -89,11 +92,11 @@ void DesertTilesheet::render(int x, int y, TileFlag flags) {
 }
  */
 
-const RenderTile& DesertTilesheet::tile(double unit_interval, TileFlag flags) const {
+RenderTile& Tilesheet::tile(double unit_interval, TileFlag flags) {
   assert(this->render_tiles_.contains(flags));
-  const auto &tiles = this->render_tiles_.at(flags);
+  auto &tiles = this->render_tiles_.at(flags);
   assert(!tiles.empty());
 
   int idx = std::floor(unit_interval * tiles.size());
-  return tiles[idx];
+  return tiles[0];
 }

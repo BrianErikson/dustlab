@@ -28,3 +28,7 @@ void GLDefaultProgram::use(const glm::mat4 &mvp, const glm::vec3 &color) {
   glProgramUniform3fv(this->id_, this->uloc_sprite_color_, 1, glm::value_ptr(color));
   glProgramUniformMatrix4fv(this->id_, this->uloc_mvp_, 1, GL_FALSE, glm::value_ptr(mvp));
 }
+
+void GLDefaultProgram::set_mvp(const glm::mat4 &mvp) {
+  glProgramUniformMatrix4fv(this->id_, this->uloc_mvp_, 1, GL_FALSE, glm::value_ptr(mvp));
+}

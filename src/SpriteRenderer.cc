@@ -22,6 +22,31 @@ bool SpriteRenderer::init() {
   return true;
 }
 
+void SpriteRenderer::render(const Scene &scene, const glm::mat4 &model, const glm::vec3 &color) {
+  static const int stride{4};
+  const auto &p = this->registry_.projection().get_matrix();
+  const auto &v = this->registry_.view().get_matrix();
+
+  this->default_program_->use(p * v * model, color);
+  scene.tilesheet->bind();
+
+  const auto &cell_size = scene.tilesheet->cell_size();
+  Transform cur_t;
+  for (int row = 0; row < scene.map.rows; row++) {
+    for (int col = 0; col < scene.map.cols; col++) {
+      const auto &value = scene.map.at<int32_t>(row, col);
+      if (value & TileFlags::MEDIUM_VOID) {
+        continue;
+      }
+      cur_t.set_translation({col * cell_size.width, row * cell_size.height, 0.f});
+      auto &tile = scene.tilesheet->tile(0, value);
+      this->default_program_->set_mvp(p * v * cur_t.get_matrix() * tile.transform.get_matrix());
+      const unsigned long offset{(scene.tilesheet->cols() * tile.row + tile.col) * stride * sizeof(GLubyte)};
+      glDrawElements(GL_TRIANGLE_STRIP, stride, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(offset));
+    }
+  }
+}
+
 void SpriteRenderer::render(const Spritesheet *ss, const glm::mat4 &model, const glm::vec3 &color,
                             int row, int col) {
   static const int stride{4};
