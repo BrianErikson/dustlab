@@ -1,5 +1,7 @@
 #include <SDL2/SDL_log.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
+#include <glm/gtx/string_cast.hpp>
 #include "GLDefaultProgram.h"
 
 GLDefaultProgram::GLDefaultProgram() : GLProgram("./res/shaders/default.vert", "./res/shaders/default.frag") {
@@ -25,10 +27,13 @@ bool GLDefaultProgram::init() {
 
 void GLDefaultProgram::use(const glm::mat4 &mvp, const glm::vec3 &color) {
   GLProgram::use();
-  glProgramUniform3fv(this->id_, this->uloc_sprite_color_, 1, glm::value_ptr(color));
-  glProgramUniformMatrix4fv(this->id_, this->uloc_mvp_, 1, GL_FALSE, glm::value_ptr(mvp));
+  this->mvp_ = mvp;
+  this->color_ = color;
+  glProgramUniform3fv(this->id_, this->uloc_sprite_color_, 1, glm::value_ptr(this->color_));
+  glProgramUniformMatrix4fv(this->id_, this->uloc_mvp_, 1, GL_FALSE, glm::value_ptr(this->mvp_));
 }
 
 void GLDefaultProgram::set_mvp(const glm::mat4 &mvp) {
-  glProgramUniformMatrix4fv(this->id_, this->uloc_mvp_, 1, GL_FALSE, glm::value_ptr(mvp));
+  this->mvp_ = mvp;
+  glProgramUniformMatrix4fv(this->id_, this->uloc_mvp_, 1, GL_FALSE, glm::value_ptr(this->mvp_));
 }

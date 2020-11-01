@@ -38,7 +38,7 @@ void SpriteRenderer::render(const Scene &scene, const glm::mat4 &model, const gl
       if (value & TileFlags::MEDIUM_VOID) {
         continue;
       }
-      cur_t.set_translation({col * cell_size.width, row * cell_size.height, 0.f});
+      cur_t.set_translation({col * cell_size.width, row * cell_size.height});
       auto &tile = scene.tilesheet->tile(0, value);
       this->default_program_->set_mvp(p * v * cur_t.get_matrix() * tile.transform.get_matrix());
       const unsigned long offset{(scene.tilesheet->cols() * tile.row + tile.col) * stride * sizeof(GLubyte)};
