@@ -33,6 +33,7 @@ public:
   double rand();
 
   entt::registry ecs{};
+  float zoom{0.03125f};
 
 private:
   DustLabRegistry();

@@ -2,6 +2,7 @@
 #include <chrono>
 #include <timer-wheel.h>
 #include <ecs/EntityGenerator.h>
+#include <glm/ext.hpp>
 #include "DustLab.h"
 #include "GLProgram.h"
 #include "geometry/Quad.h"
@@ -160,8 +161,11 @@ int DustLab::run() {
     glClearColor(0.0f, 0.f, 0.f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    renderer.render(scene, {}, glm::vec3(1.f));
+    renderer.render(scene, glm::mat4{1.f}, glm::vec3{1.f});
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     renderer.render(ebot);
+    glDisable(GL_BLEND);
   }
 
   return 0;
@@ -183,10 +187,12 @@ void DustLab::handle_event(const SDL_Event &ev) {
 }
 
 void DustLab::handle_window_event(const SDL_WindowEvent &ev) {
-  switch (ev.type) {
+  switch (ev.event) {
+    case SDL_WINDOWEVENT_SIZE_CHANGED:
     case SDL_WINDOWEVENT_RESIZED:
       SDL_Log("Window %d resized to %dx%d", ev.windowID, ev.data1, ev.data2);
-      glViewport(0, 0, ev.data1, ev.data2);
+      this->registry_.view().set_scale({this->registry_.zoom * ev.data1, this->registry_.zoom * ev.data2});
+      this->registry_.projection().set(glm::ortho(0.f, (float)ev.data1, 0.f, (float)ev.data2, -1.0f, 1.f));
       break;
     default:
       break;

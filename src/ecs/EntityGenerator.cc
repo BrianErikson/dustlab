@@ -1,3 +1,4 @@
+#include <iostream>
 #include "EntityGenerator.h"
 #include "core.h"
 
@@ -16,7 +17,8 @@ std::optional<entt::entity> EntityGenerator::BasicBot() {
   ess.col = 0;
   ess.transform.set_translation(-this->witchcraft_spritesheet_->model_offset(ess.row, ess.col));
   const auto cell_size = this->witchcraft_spritesheet_->cell_size();
-  ess.transform.set_scale({1/cell_size.width, 1/cell_size.height});
+  std::cout << 2/cell_size.width << " " << 2/cell_size.height << std::endl;
+  ess.transform.set_scale({2/cell_size.width, 2/cell_size.height});
 
   auto &anim_timer = this->registry_.ecs.emplace<Timer>(sprite_node);
 

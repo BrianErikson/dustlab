@@ -25,7 +25,7 @@ cv::Mat WorldGenerator::get_perlin_noise(int seed, double step, int x, int y, in
 
 Map WorldGenerator::get_map() {
   const int void_upper_thresh = 128;
-  Map map(100, 100, CV_32SC1);
+  Map map(32, 32, CV_32SC1);
 
   auto noise1 = WorldGenerator::get_perlin_noise(0, 0.1, 0, 0, 0, map.cols, map.rows);
   for (int row = 0; row < map.rows; row++) {

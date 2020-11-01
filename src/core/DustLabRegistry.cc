@@ -1,4 +1,4 @@
-#include "common.h"
+#include "DustLabRegistry.h"
 #include <Transform.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
@@ -11,7 +11,7 @@ DustLabRegistry &DustLabRegistry::instance() {
 DustLabRegistry::DustLabRegistry() {
   {
     auto &t = this->ecs.emplace<ETransform>(this->camera_);
-    t.t.set(glm::ortho(0.f, 10.f, 0.f, 10.f, 0.0f, 10.f));
+    t.t.set(glm::ortho(0.f, 32.f, 0.f, 32.f, -1.0f, 1.f));
   }
 
   {

@@ -127,7 +127,7 @@ glm::vec2 Spritesheet::image_offset(int row, int col) const {
 }
 
 glm::vec3 Spritesheet::model_offset(int row, int col) const {
-  return glm::vec3{col * this->stride_width_, row * this->stride_height_, 0.f};
+  return glm::vec3{(float)col * this->stride_width_, (float)row * this->stride_height_, 0.f};
 }
 
 Size<float> Spritesheet::cell_size() const {

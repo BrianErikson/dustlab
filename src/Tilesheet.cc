@@ -72,12 +72,14 @@ void Tilesheet::generate_direction_tiles(int row, int col, TileFlag flags, int b
   TileFlag type = flags & TileFlags::TYPE_MASK;
   assert(!(flags & TileFlags::DIR_MASK));
 
-  auto offset = this->model_offset(row, col);
+  glm::vec2 scale{1/this->cell_size().width, 1/this->cell_size().height};
+  auto offset = -this->model_offset(row, col);
   for (int r = 0; r < 360; r += 90) {
     TileFlag dir = r << TileFlags::DIR_SHIFT;
     Transform t;
     t.set_rotation((float)(r - base_rotation));
     t.set_translation(offset);
+    t.set_scale(scale);
     this->render_tiles_[medium | type | dir].emplace_back(RenderTile{t, row, col});
   }
 }

@@ -9,6 +9,7 @@ public:
   bool init() override;
   void use(const glm::mat4 &mvp, const glm::vec3 &color);
   void set_mvp(const glm::mat4 &mvp);
+  int stride() const override;
 
 private:
   glm::vec3 color_{1.f};
@@ -16,5 +17,3 @@ private:
   int uloc_mvp_{0}; // mat4
   int uloc_sprite_color_{0}; // vec3
 };
-
-

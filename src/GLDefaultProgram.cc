@@ -37,3 +37,7 @@ void GLDefaultProgram::set_mvp(const glm::mat4 &mvp) {
   this->mvp_ = mvp;
   glProgramUniformMatrix4fv(this->id_, this->uloc_mvp_, 1, GL_FALSE, glm::value_ptr(this->mvp_));
 }
+
+int GLDefaultProgram::stride() const {
+  return 4;
+}

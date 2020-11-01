@@ -1,7 +1,7 @@
 #pragma once
 #include <optional>
 #include <entt/entt.hpp>
-#include <core/common.h>
+#include <core/DustLabRegistry.h>
 #include <Spritesheet.h>
 
 class EntityGenerator

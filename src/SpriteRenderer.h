@@ -2,7 +2,7 @@
 #include <memory>
 #include <entt/entt.hpp>
 #include <glm/glm.hpp>
-#include <core/common.h>
+#include <core/DustLabRegistry.h>
 #include "geometry/Quad.h"
 #include "Texture.h"
 #include "GLDefaultProgram.h"
