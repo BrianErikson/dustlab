@@ -3,6 +3,9 @@
 #include <glm/glm.hpp>
 #include "Texture.h"
 
+/**
+ * Spritesheet aspect ratio must be 1:1
+ */
 class Spritesheet : public Texture
 {
 public:

@@ -18,27 +18,27 @@ TEST(dustlab, transform) {
   {
     Transform t;
     t.set_translation({1, 0});
-    ASSERT_TRUE(t.get_matrix() == translate(mat4{1.f}, {1.f, 0.f}));
+    ASSERT_TRUE(t.get_matrix() == translate(mat4{1.f}, {1.f, 0.f, 0.f}));
   }
   {
     Transform t;
     t.set_rotation(90);
-    auto rhs = rotate(mat4{1.f}, radians(90.f));
+    auto rhs = rotate(mat4{1.f}, radians(90.f), glm::vec3(0.f, 0.f, 1.f));
 
     ASSERT_TRUE(t.get_matrix() == rhs) << "lhs:" << to_string(t.get_matrix())
       << "\nrhs:" << to_string(rhs);
   }
   {
     Transform t;
-    t.set_scale(vec2{1.f});
+    t.set_scale(vec2{2.f});
     auto rhs = mat4{1.f};
-    ASSERT_TRUE(t.get_matrix() == scale(rhs, {1.f, 1.f})) << "lhs:" << to_string(t.get_matrix())
-                                                          << "\nrhs:" << to_string(scale(rhs, vec2{1.f, 1.f}));
+    ASSERT_TRUE(t.get_matrix() == scale(rhs, {2.f, 2.f, 1.f})) << "lhs:" << to_string(t.get_matrix())
+                                                          << "\nrhs:" << to_string(scale(rhs, vec3{2.f, 2.f, 1.f}));
   }
   {
-    const vec2 scale{2.f, 2.f};
+    const vec3 scale{2.f, 2.f, 1.f};
     const float rot{90.f};
-    const vec2 pos{1.f, 0.f};
+    const vec3 pos{1.f, 0.f, 0.f};
 
     Transform t;
     t.set_scale(scale);
@@ -47,7 +47,7 @@ TEST(dustlab, transform) {
 
     mat4 rhs{1.f};
     rhs = glm::scale(rhs, scale);
-    rhs = glm::rotate(rhs, glm::radians(rot));
+    rhs = glm::rotate(rhs, glm::radians(rot), glm::vec3{0.f, 0.f, 1.f});
     rhs = glm::translate(rhs, pos);
 
     ASSERT_EQ(t.get_matrix(), rhs) << "lhs:" << to_string(t.get_matrix())
