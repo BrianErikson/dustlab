@@ -5,10 +5,10 @@
 #include "GLShader.h"
 
 GLShader::GLShader(const std::string &filepath) : filepath(filepath) {
-  if (this->filepath.ends_with(".vert")) {
+  if (this->filepath.rfind(".vert") != std::string::npos) {
     this->shader_type = GL_VERTEX_SHADER;
   }
-  else if (this->filepath.ends_with(".frag")) {
+  else if (this->filepath.rfind(".frag") != std::string::npos) {
     this->shader_type = GL_FRAGMENT_SHADER;
   }
 }

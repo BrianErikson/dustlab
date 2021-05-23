@@ -22,15 +22,6 @@ constexpr TileFlag TYPE_EDGE = 1 << 4;
 constexpr TileFlag TYPE_CORNER = 1 << 5;
 constexpr TileFlag TYPE_CENTER = 1 << 6;
 
-constexpr TileFlag DIR_CENTER = 1 << 8;
-constexpr TileFlag DIR_TOP_RIGHT = 45 << 8;
-constexpr TileFlag DIR_RIGHT = 90 << 8;
-constexpr TileFlag DIR_BOTTOM_RIGHT = 135 << 8;
-constexpr TileFlag DIR_BOTTOM  = 180 << 8;
-constexpr TileFlag DIR_BOTTOM_LEFT  = -135 << 8;
-constexpr TileFlag DIR_LEFT = -90 << 8;
-constexpr TileFlag DIR_TOP_LEFT  = -45 << 8;
-constexpr TileFlag DIR_TOP = 0;
 constexpr TileFlag DIR_SHIFT = 8;
 }
 

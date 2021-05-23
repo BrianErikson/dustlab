@@ -1,4 +1,3 @@
-#include <glm/gtx/string_cast.hpp>
 #include <iostream>
 #include "SpriteRenderer.h"
 #include "ecs/core.h"

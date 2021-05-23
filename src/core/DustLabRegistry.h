@@ -28,7 +28,7 @@ public:
   Timer timer_recurring(long ms, const std::function<void()>& callback);
 
   void subscribe(const std::shared_ptr<Listener> &listener);
-  void unsubscribe(Listener *listener);
+  void unsubscribe(const std::shared_ptr<Listener> &listener);
 
   double rand();
 

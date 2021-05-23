@@ -77,10 +77,12 @@ void DustLabRegistry::subscribe(const std::shared_ptr<Listener> &listener) {
   this->listeners_.emplace_back(listener);
 }
 
-void DustLabRegistry::unsubscribe(Listener *listener) {
-  std::erase_if(this->listeners_, [listener](const std::shared_ptr<Listener> &a) {
-    return a.get() == listener;
-  });
+void DustLabRegistry::unsubscribe(const std::shared_ptr<Listener> &listener) {
+  auto iter = std::find(this->listeners_.begin(), this->listeners_.end(), listener);
+  while (iter != this->listeners_.end()) {
+    this->listeners_.erase(iter);
+    iter = std::find(this->listeners_.begin(), this->listeners_.end(), listener);
+  }
 }
 
 double DustLabRegistry::rand() {

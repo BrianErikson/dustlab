@@ -3,9 +3,10 @@ project(dustlab)
 
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_SOURCE_DIR}/cmake")
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS})
 add_compile_options(-Wall -pedantic -fconcepts)
+add_compile_definitions(GLM_ENABLE_EXPERIMENTAL)
 
 find_package(SDL2 REQUIRED)
 find_package(glm REQUIRED)
@@ -13,13 +14,28 @@ find_package(SOIL REQUIRED)
 find_package(EnTT REQUIRED)
 find_package(LibNoise REQUIRED)
 find_package(cmcstl2 CONFIG REQUIRED)
+find_package(OpenCV REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(glew REQUIRED IMPORTED_TARGET glew)
-pkg_check_modules(opencv4 REQUIRED IMPORTED_TARGET opencv4)
 
 set(SRCS
   src/DustLab.cc
-  src/Renderable.cc src/Renderable.h src/geometry/Quad.cc src/geometry/Quad.h src/Renderable.cc src/GLShader.cc src/GLShader.h src/GLProgram.cc src/GLProgram.h src/SpriteRenderer.cc src/SpriteRenderer.h src/Texture.cc src/Texture.h src/GLDefaultProgram.cc src/GLDefaultProgram.h src/Spritesheet.cc src/Spritesheet.h src/geometry/common.h src/Transform.cc src/Transform.h src/ecs/core.h src/ecs/core.cc src/core/DustLabRegistry.cc src/core/DustLabRegistry.h extern/timer-wheel.h src/ecs/EntityGenerator.cc src/ecs/EntityGenerator.h src/Tilesheet.cc src/Tilesheet.h src/WorldGenerator.cc src/WorldGenerator.h)
+  src/Renderable.cc
+  src/geometry/Quad.cc
+  src/Renderable.cc
+  src/GLShader.cc
+  src/GLProgram.cc
+  src/SpriteRenderer.cc
+  src/Texture.cc
+  src/GLDefaultProgram.cc
+  src/Spritesheet.cc
+  src/Transform.cc
+  src/ecs/core.cc
+  src/core/DustLabRegistry.cc
+  src/ecs/EntityGenerator.cc
+  src/Tilesheet.cc
+  src/WorldGenerator.cc
+)
 
 add_library(dustlabObj OBJECT
   ${SRCS}
@@ -40,7 +56,7 @@ target_link_libraries(dustlabObj
   ${EnTT_LIBRARIES}
   ${glm_LIBRARIES}
   ${SOIL_LIBRARIES}
-  PkgConfig::opencv4
+  ${OpenCV_LIBS}
   PkgConfig::glew
 )
 

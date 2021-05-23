@@ -95,10 +95,10 @@ void Tilesheet::render(int x, int y, TileFlag flags) {
  */
 
 RenderTile& Tilesheet::tile(double unit_interval, TileFlag flags) {
-  assert(this->render_tiles_.contains(flags));
+  assert(this->render_tiles_.find(flags) != this->render_tiles_.end());
   auto &tiles = this->render_tiles_.at(flags);
   assert(!tiles.empty());
 
-  int idx = std::floor(unit_interval * tiles.size());
+  //int idx = std::floor(unit_interval * tiles.size());
   return tiles[0];
 }
